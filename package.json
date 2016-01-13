@@ -27,7 +27,7 @@
   },
   "scripts": {
     "browserify": "browserify src/index.js -t babelify -t workerify -t browserify-shim --standalone stl-parser --exclude rx --outfile lib/stl-parser.js",
-    "mocha": "mocha specs --compilers js:babel-core/register",
+    "mocha": "mocha test --compilers js:babel-core/register",
     "test": "npm run mocha",
     "test-client": "browserify-test --transform babelify --transform workerify --transform brfs ",
     "test-client2": "mochify --transform babelify --transform workerify --transform brfs",
