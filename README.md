@@ -2,10 +2,7 @@
 
 [![GitHub version](https://badge.fury.io/gh/usco%2Fusco-3mf-parser.svg)](https://badge.fury.io/gh/usco%2Fusco-3mf-parser)
 
-3mf format parser for USCO project
-
-originally based on THREE.js STL parser, but rather extensively modified.
-(not dependenant, or using three.js anymore)
+[3mf](https://en.wikipedia.org/wiki/3D_Manufacturing_Format) format parser for USCO project
 
 Optimized for speed in the browser (webworkers etc)
 
@@ -19,17 +16,18 @@ Optimized for speed in the browser (webworkers etc)
 
 ## Usage 
 
-  
-import parse,  {outputs} from '../lib/3mf-parser'
+```
+  import parse,  {outputs} from '../lib/3mf-parser'
 
-let data = fs.readFileSync("mesh.3mf")
+  let data = fs.readFileSync("mesh.3mf")
 
-let threemfObs = parse(data) //we get an observable back
+  let threemfObs = parse(data) //we get an observable back
 
-threemfObs.forEach(function(parsedSTL){
-  //DO what you want with the data wich is something like {vertices,normals,etc}
-  console.log(parsedSTL) 
-})
+  threemfObs.forEach(function(parsedSTL){
+    //DO what you want with the data wich is something like {vertices,normals,etc}
+    console.log(parsedSTL) 
+  })
+```
 
 
 
