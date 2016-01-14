@@ -40,4 +40,4 @@ describe("3MF parser", function() {
     })
   })*/
 
-}
+})
