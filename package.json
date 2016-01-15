@@ -11,7 +11,8 @@
     "composite-detect": "0.0.3",
     "fast.js": "^0.1.1",
     "jszip": "^2.5.0",
-    "rx": "^4.0.7"
+    "rx": "^4.0.7",
+    "sax": "^1.1.4"
   },
   "devDependencies": {
     "assert": "^1.3.0",
