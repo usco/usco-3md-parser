@@ -92,3 +92,76 @@ export function parseMapCoords( node, prefix, defaultValue)
   //currentGeometry.faceVertexUvs[ 0 ].push( [uv1,uv2,uv3])
   return mappingData
 }
+
+
+
+export function createModelBuffers ( modelData ) {
+  //console.log("creating model buffers",modelData, modelData._attributes)
+
+  /*let faces     = modelData.faceCount
+  let colorSize = 3
+
+  let positions = new Float32Array( faces * 3 * 3 )
+  let normals   = new Float32Array( faces * 3 * 3 )
+  //let colors  = new Float32Array( faces *3 * colorSize )
+  let indices   = new Uint32Array( faces * 3  )
+
+  //vertices.set( modelData.position );
+  //normals.set( modelData.normal );
+  //indices.set( modelData.indices );
+
+  positions.set( modelData._attributes.position )
+  normals.set( modelData._attributes.normal )
+  indices.set( modelData._attributes.indices )
+
+  return {positions, indices, normals}
+
+
+  console.log("creating model buffers",modelData)
+  
+  var faces = modelData.faceCount
+  var colorSize =3
+  
+  var vertices = new Float32Array( faces * 3 * 3 )
+  var normals = new Float32Array( faces * 3 * 3 )
+  var colors = new Float32Array( faces *3 * colorSize )
+  var indices = new Uint32Array( faces * 3  )
+  
+  vertices.set( modelData._attributes.position )
+  normals.set( modelData._attributes.normal )
+  indices.set( modelData._attributes.indices )
+  colors.set( modelData._attributes.vcolors )
+
+  var geometry = new THREE.BufferGeometry()
+  geometry.addAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) )
+  //geometry.addAttribute( 'normal', new THREE.BufferAttribute( normals, 3 ) )
+  geometry.addAttribute( 'index', new THREE.BufferAttribute( indices, 1 ) )
+  geometry.addAttribute( 'color', new THREE.BufferAttribute( colors, colorSize ) )
+  
+  if(this.recomputeNormals)
+  {
+    //TODO: only do this, if no normals were specified???
+    geometry.computeFaceNormals()
+    geometry.computeVertexNormals()
+  }*/
+  
+  /*var vs = require('./vertShader.vert')()
+  var fs = require('./fragShader.frag')()
+  
+  var material = new THREE.RawShaderMaterial( {
+
+          uniforms: {
+            time: { type: "f", value: 1.0 }
+          },
+          vertexShader: vs,
+          fragmentShader: fs,
+          side: THREE.DoubleSide,
+          transparent: true
+
+        } )
+
+  var color = this.defaultColor 
+  var material = new this.defaultMaterialType({color:0XFFFFFF,vertexColors: THREE.VertexColors})
+  var mesh = new THREE.Mesh( geometry, material )*/
+  //return mesh
+}
