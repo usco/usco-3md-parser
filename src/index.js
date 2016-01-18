@@ -39,11 +39,10 @@ export default function parse(data, parameters={}){
   }
 
   function extractMetadata(data){
-    let tag = data.tag
+    let {tag,text} = data
 
-    console.log("metaData",tag)
     let name    = tag.attributes['name']
-    let value   = 0
+    let value   = text
     let result = {}
     result[name] = value
     return result
@@ -76,36 +75,35 @@ export default function parse(data, parameters={}){
   //rawData$.forEach(e=>console.log("rawData",e))
 
   const rootMeta$ = rawData$
-    .filter(d=>d.tag.name === "3mf" && d.start === true)
+    .filter(d=>d.tag.name === "3mf" && d.start)
     .map(threeMFInfo)
 
   const metadata$ = rawData$
-    .filter(d=>d.tag.name === "metadata" && d.start === true)
+    .filter(d=>d.tag.name === "metadata" && d.text)
     .map(extractMetadata)
 
   const vCoords$ = rawData$
-    .filter(d=>d.tag.name === "vertex" && d.start === true)
+    .filter(d=>d.tag.name === "vertex" && d.start)
     .map(vertexCoordinate)
 
   const vIndices$ = rawData$
-    .filter(d=>d.tag.name === "triangle" && d.start === true)
+    .filter(d=>d.tag.name === "triangle" && d.start)
     .map(vertexIndices)
 
   const startObject$ = rawData$
-    .filter(d=>d.tag.name === "object" && d.start === true)
+    .filter(d=>d.tag.name === "object" && d.start)
    
   const finishObject$ = rawData$
-    .filter(d=>d.tag.name === "object" && d.end === true)
+    .filter(d=>d.tag.name === "object" && d.end)
 
   const finishBuild$ = rawData$
-    .filter(d=>d.tag.name === "build" && d.end === true)
+    .filter(d=>d.tag.name === "build" && d.end)
 
   const item$ = rawData$
-    .filter(d=>d.tag.name === "item" && d.start === true)
+    .filter(d=>d.tag.name === "item" && d.start)
 
   //
   /*
-
   const components$  = rawData$
   const component$  = rawData$*/
 
@@ -174,9 +172,9 @@ export default function parse(data, parameters={}){
 
   ///
   const actions = {
-    //metadata$
+    metadata$
     
-    vCoords$
+    ,vCoords$
     ,vIndices$
 
     ,startObject$

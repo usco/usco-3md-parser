@@ -39,22 +39,60 @@ describe("3MF parser", function() {
     )
   })
 
+  it("can parse 3mf files with complex geometry", function(done) {
+    this.timeout(5000)
+    let data = fs.readFileSync("test/data/heartgears.3mf",'binary')
+    let obs  = parse(data)
+   
+    obs.forEach(function(parsed){
+      assert.equal(parsed.build.length,1)
+      assert.equal(parsed.objects['1'].positions.length,45558)
+      assert.equal(parsed.objects['1'].indices.length, 91908)
+
+      done()
+    })
+  })
+
+  it("can parse 3mf files and get their metadata ", function(done) {
+    let data = fs.readFileSync("test/data/cube_gears.3mf",'binary')
+    let obs  = parse(data)
+   
+    let exp = { 
+      Title: 'Three Cube Gears',
+      Designer: 'Emmett Lalish',
+      LicenseTerms: 'Creative Commons - Attribution - Share Alike',
+      CreationDate: '2015-07-28',
+      Description: 'http://www.thingiverse.com/thing:213946' 
+    }
+
+    obs.subscribe(
+      function(parsed){
+        assert.deepEqual(parsed.metadata, exp)
+
+        done()
+      }
+      ,function(error){
+        console.log("error in parsing",error)
+      }
+      ,function(){
+        console.log("Completed")
+      }
+    )
+  })
+
   it("can parse 3mf files with multiple meshes and transforms in a build ", function(done) {
     this.timeout(5000)
     let data = fs.readFileSync("test/data/cube_gears.3mf",'binary')
     let obs  = parse(data)
    
-
     obs.forEach(function(parsed){
-      //console.log("parsed",parsed.build)
-      //console.log("parsed",JSON.stringify(parsed))
       assert.equal(Object.keys(parsed.objects).length,17)
+      assert.equal(parsed.build.length,17)
       assert.equal(parsed.objects['1'].positions.length,5232)
       assert.equal(parsed.objects['1'].indices.length, 10452)
 
       done()
     })
-
   })
 
 

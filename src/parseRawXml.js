@@ -17,6 +17,11 @@ export default function parseRawXml(input){
       parsedData.onNext( {tag, end:true} )
     }
 
+    function onTagText(text){
+      //console.log("text",text)//, this._parser.tag)
+      parsedData.onNext( {tag:this._parser.tag, text} )
+    }
+
 
     let saxStream =  sax.createStream(true, {trim:true})
 
@@ -31,6 +36,7 @@ export default function parseRawXml(input){
     })
     saxStream.on("opentag", onTagOpen)
     saxStream.on("closetag", onTagClose)
+    saxStream.on("text", onTagText)
 
     saxStream.on("ready",function(){
       console.log("ready")
