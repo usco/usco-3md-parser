@@ -7,10 +7,7 @@ const fs = require('fs')
 //let Rx = require('rx')
 import assign from 'fast.js/object/assign'
 import parse, {outputs} from '../src/index' 
-//import parse, {outputs}'../lib/stl-parser'
-
-
-
+//import parse, {outputs}'../lib/3mf-parser'
 
 
 describe("3MF parser", function() {
@@ -22,7 +19,9 @@ describe("3MF parser", function() {
     let obs  = parse(data)
    
 
-    obs.subscribe(
+    obs
+      .filter( data => (!data.hasOwnProperty("progress")) ) //filter out progress information
+      .forEach(
       function(parsed){
         assert.equal(Object.keys(parsed.objects).length,1)
         assert.equal(parsed.objects['1'].positions.length,24)
@@ -32,10 +31,7 @@ describe("3MF parser", function() {
       }
       ,function(error){
         console.log("error in parsing",error)
-      }
-      ,function(){
-        console.log("Completed")
-      }
+      }  
     )
   })
 
@@ -44,13 +40,15 @@ describe("3MF parser", function() {
     let data = fs.readFileSync("test/data/heartgears.3mf",'binary')
     let obs  = parse(data)
    
-    obs.forEach(function(parsed){
-      assert.equal(parsed.build.length,1)
-      assert.equal(parsed.objects['1'].positions.length,45558)//45558)//TODO: double check this
-      assert.equal(parsed.objects['1'].indices.length, 91908)
+    obs
+      .filter( data => (!data.hasOwnProperty("progress")) ) //filter out progress information
+      .forEach(function(parsed){
+        assert.equal(parsed.build.length,1)
+        assert.equal(parsed.objects['1'].positions.length,45558)//45558)//TODO: double check this
+        assert.equal(parsed.objects['1'].indices.length, 91908)
 
-      done()
-    })
+        done()
+      })
   })
 
   it("can parse 3mf files and get their metadata ", function(done) {
@@ -66,19 +64,18 @@ describe("3MF parser", function() {
       Description: 'http://www.thingiverse.com/thing:213946' 
     }
 
-    obs.subscribe(
-      function(parsed){
-        assert.deepEqual(parsed.metadata, exp)
+    obs
+      .filter( data => (!data.hasOwnProperty("progress")) ) //filter out progress information
+      .forEach(
+        function(parsed){
+          assert.deepEqual(parsed.metadata, exp)
 
-        done()
-      }
-      ,function(error){
-        console.log("error in parsing",error)
-      }
-      ,function(){
-        console.log("Completed")
-      }
-    )
+          done()
+        }
+        ,function(error){
+          console.log("error in parsing",error)
+        }
+      )
   })
 
   it("can parse 3mf files with multiple meshes and transforms in a build ", function(done) {
@@ -86,23 +83,25 @@ describe("3MF parser", function() {
     let data = fs.readFileSync("test/data/cube_gears.3mf",'binary')
     let obs  = parse(data)
 
-    obs.forEach(function(parsed){
-      assert.equal(Object.keys(parsed.objects).length,17)
-      assert.equal(parsed.build.length,17)
-      assert.equal(parsed.objects['1'].positions.length,5232)
-      assert.equal(parsed.objects['1'].indices.length, 10452)
+    obs
+      .filter( data => (!data.hasOwnProperty("progress")) ) //filter out progress information
+      .forEach(function(parsed){
+        assert.equal(Object.keys(parsed.objects).length,17)
+        assert.equal(parsed.build.length,17)
+        assert.equal(parsed.objects['1'].positions.length,5232)
+        assert.equal(parsed.objects['1'].indices.length, 10452)
 
-      //console.log("parsed",parsed.build)
+        //console.log("parsed",parsed.build)
 
-      assert.deepEqual(parsed.build[0].transforms, [1, 0, 0, 0, 1, 0, 0, 0, 1, -1.23762, 1.20238, -20.0108] )
-      assert.deepEqual(parsed.build[9].transforms, [1, 0, 0, 0, 1, 0, 0, 0, 1, -1.23762, 1.20238, -20.0108] )
+        assert.deepEqual(parsed.build[0].transforms, [1, 0, 0, 0, 1, 0, 0, 0, 1, -1.23762, 1.20238, -20.0108] )
+        assert.deepEqual(parsed.build[9].transforms, [1, 0, 0, 0, 1, 0, 0, 0, 1, -1.23762, 1.20238, -20.0108] )
 
-      done()
-    })
+        done()
+      })
   })
 
 
-  /*  it("should handle errors gracefully", done => {
+  it("should handle errors gracefully", done => {
     let data = {foo:"42"}
     let obs = parse(data) //we get an observable back
 
@@ -110,6 +109,6 @@ describe("3MF parser", function() {
       assert.equal(error.message,"First argument to DataView constructor must be an ArrayBuffer")
       done()
     })
-  })*/
+  })
 
 })
