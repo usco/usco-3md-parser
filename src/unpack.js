@@ -20,9 +20,7 @@ function streamZipData(arrayBuffer, obs){
     let reader = new FileReader()
 
     reader.onload = function(e) {
-      console.log("dsfdsf")
       let txt = e.target.result
-      console.log("text",txt)
       obs.onNext( txt )
     }
     reader.readAsText(blob)
@@ -53,14 +51,13 @@ export default function unpack ( data )
     .flatMap(
       function(entry){
         let result = new Rx.ReplaySubject(1)
-        console.log("entry",entry.name)
         let ab = entry.asArrayBuffer()
         streamZipData(ab, result)
         return result
       }
     )
     .catch(function(error){
-      console.log("error",error)
+      //console.log("error",error)
       let formated = ensureString(data) //why do we use this ?
       return formated 
     })
