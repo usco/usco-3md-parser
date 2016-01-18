@@ -7,6 +7,7 @@
     "url": "http://github.com/usco/usco-3mf-parser.git"
   },
   "main": "src/index.js",
+  "browser":"lib/3mf-parser.js",
   "dependencies": {
     "composite-detect": "0.0.3",
     "fast.js": "^0.1.1",
@@ -28,7 +29,7 @@
     "workerify": "^0.3.0"
   },
   "scripts": {
-    "browserify": "browserify src/index.js -t babelify -t workerify -t browserify-shim --standalone stl-parser --exclude rx --outfile lib/stl-parser.js",
+    "browserify": "browserify src/index.js -t babelify -t workerify -t browserify-shim --standalone 3mf-parser --exclude rx --outfile lib/3mf-parser.js",
     "mocha": "mocha test --compilers js:babel-core/register",
     "test": "npm run mocha",
     "test-client": "browserify-test --transform babelify --transform workerify --transform brfs ",
