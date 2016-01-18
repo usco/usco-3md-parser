@@ -46,7 +46,7 @@ describe("3MF parser", function() {
    
     obs.forEach(function(parsed){
       assert.equal(parsed.build.length,1)
-      assert.equal(parsed.objects['1'].positions.length,45558)
+      assert.equal(parsed.objects['1'].positions.length,45558)//45558)//TODO: double check this
       assert.equal(parsed.objects['1'].indices.length, 91908)
 
       done()
@@ -84,12 +84,17 @@ describe("3MF parser", function() {
     this.timeout(5000)
     let data = fs.readFileSync("test/data/cube_gears.3mf",'binary')
     let obs  = parse(data)
-   
+
     obs.forEach(function(parsed){
       assert.equal(Object.keys(parsed.objects).length,17)
       assert.equal(parsed.build.length,17)
       assert.equal(parsed.objects['1'].positions.length,5232)
       assert.equal(parsed.objects['1'].indices.length, 10452)
+
+      //console.log("parsed",parsed.build)
+
+      assert.deepEqual(parsed.build[0].transforms, [1, 0, 0, 0, 1, 0, 0, 0, 1, -1.23762, 1.20238, -20.0108] )
+      assert.deepEqual(parsed.build[9].transforms, [1, 0, 0, 0, 1, 0, 0, 0, 1, -1.23762, 1.20238, -20.0108] )
 
       done()
     })

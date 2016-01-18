@@ -1,7 +1,6 @@
 import Rx from 'rx'
 import assign from 'fast.js/object/assign'
 
-
 import unpack from './unpack'
 import parseRawXml from './parseRawXml'
 
@@ -163,7 +162,12 @@ function makeReducers(){
     const item = ["objectid","transform","partnumber"]
       .reduce(function(result,key){
         if(key in tag.attributes){
-          result[key] = tag.attributes[key]
+          
+          if(key === 'transform'){
+            result['transforms'] = tag.attributes[key].split(' ').map(t=>parseFloat(t))
+          }else{
+            result[key] = tag.attributes[key]
+          }
         }
         return result 
       },{}) 

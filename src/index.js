@@ -21,16 +21,16 @@ export default function parse(data, parameters={}){
     let worker = new Worker( "./worker.js" )//browserify 
 
     worker.onmessage = function( event ) {
-      let files = event.data
- 
+      obs.onNext(event.data)
       obs.onNext({progress: 1, total:Math.NaN}) 
       obs.onCompleted()
     }
     worker.onerror = function( event ){
-      obs.onError(`filename:${event.filename} lineno: ${event.lineno} error: ${event.message}`)
+      obs.onError(`error: ${event.message}`)
     }
 
-    worker.postMessage( { "data": binaryData, "offsets": offsets } )
+    worker.postMessage( { "data": data } )
+
     obs.catch(e=>worker.terminate()) 
   } 
   else 
