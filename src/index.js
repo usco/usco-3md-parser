@@ -21,7 +21,7 @@ export default function parse(data, parameters={}){
     let worker = new Worker( "./worker.js" )//browserify 
 
     worker.onmessage = function( event ) {
-      obs.onNext(event.data)
+      obs.onNext(event.data.data)
       obs.onNext({progress: 1, total:Math.NaN}) 
       obs.onCompleted()
     }
