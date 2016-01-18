@@ -54,6 +54,7 @@ describe("3MF parser", function() {
   })
 
   it("can parse 3mf files and get their metadata ", function(done) {
+    this.timeout(5000)
     let data = fs.readFileSync("test/data/cube_gears.3mf",'binary')
     let obs  = parse(data)
    
