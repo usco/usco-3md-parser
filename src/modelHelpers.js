@@ -73,31 +73,4 @@ export function makeModel(defaults, updateFns, actions, source, options={doApply
     .merge(source$)
     .scan((currentData, modFn) => modFn(currentData))//combine existing data with new one
     //.distinctUntilChanged()
-    //.shareReplay(1)
 }
-
-
-/*function makeUpdateFn$(rawData$) {
-
-
-  }
-
-  function model(rawData$, actions) {
-    const defaults = {
-
-    }
-    const updateFn$ = makeUpdateFn$(rawData$)
-    const state$ = updateFn$
-      .startWith(defaults)
-      .scan(smartStateFold)
-    return state$
-  }*/
-
-
-  /* smartStateFold(prev, curr) {
-    if (typeof curr === 'function') {
-      return curr(prev);
-    } else {
-      return curr;
-    }
-  },*/

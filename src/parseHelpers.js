@@ -96,28 +96,30 @@ export function parseMapCoords( node, prefix, defaultValue)
 
 
 export function createModelBuffers ( modelData ) {
-  //console.log("creating model buffers",modelData, modelData._attributes)
+  //console.log("creating model buffers")//modelData, modelData._attributes)
 
-  /*let faces     = modelData.faceCount
+  let faces     = modelData._attributes.indices.length/3
   let colorSize = 3
 
-  let positions = new Float32Array( faces * 3 * 3 )
-  let normals   = new Float32Array( faces * 3 * 3 )
+  //console.log("faces",modelData._attributes.positions.length, modelData._attributes.indices.length, faces)
+
+  let positions = new Float32Array( modelData._attributes.positions.length )
+  //let normals   = new Float32Array( faces * 3 * 3 )
   //let colors  = new Float32Array( faces *3 * colorSize )
-  let indices   = new Uint32Array( faces * 3  )
+  let indices   = new Uint32Array( modelData._attributes.indices.length  )
 
   //vertices.set( modelData.position );
   //normals.set( modelData.normal );
   //indices.set( modelData.indices );
 
-  positions.set( modelData._attributes.position )
-  normals.set( modelData._attributes.normal )
+  positions.set( modelData._attributes.positions )
+  //normals.set( modelData._attributes.normal )
   indices.set( modelData._attributes.indices )
 
-  return {positions, indices, normals}
+  return {id:modelData.id, name:modelData.name, positions, indices}
 
 
-  console.log("creating model buffers",modelData)
+  /*console.log("creating model buffers",modelData)
   
   var faces = modelData.faceCount
   var colorSize =3

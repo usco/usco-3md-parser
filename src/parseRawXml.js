@@ -10,7 +10,7 @@ export default function parseRawXml(input){
     }
 
     function onTagClose(tag){
-      console.log("onTagClose",tag)
+      //console.log("onTagClose",tag)
       if(!tag.name){
         tag= {name:tag}
       }

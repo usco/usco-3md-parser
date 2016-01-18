@@ -10,20 +10,47 @@ import parse, {outputs} from '../src/index'
 //import parse, {outputs}'../lib/stl-parser'
 
 
+
+
+
 describe("3MF parser", function() {
   //console.log("Parser outputs", outputs, parse)
 
-  it("can parse 3mf files with just geometry ", done => {
-    this.timeout(5000)
+  it("can parse 3mf files with simple geometry ", function(done) {
+    this.timeout(3000)
     let data = fs.readFileSync("test/data/box.3mf",'binary')
     let obs  = parse(data)
    
 
+    obs.subscribe(
+      function(parsed){
+        assert.equal(Object.keys(parsed.objects).length,1)
+        assert.equal(parsed.objects['1'].positions.length,24)
+        assert.equal(parsed.objects['1'].indices.length, 36)
+
+        done()
+      }
+      ,function(error){
+        console.log("error in parsing",error)
+      }
+      ,function(){
+        console.log("Completed")
+      }
+    )
+  })
+
+  it("can parse 3mf files with multiple meshes and transforms in a build ", function(done) {
+    this.timeout(5000)
+    let data = fs.readFileSync("test/data/cube_gears.3mf",'binary')
+    let obs  = parse(data)
+   
+
     obs.forEach(function(parsed){
-      console.log("parsed",parsed)
-      //assert.equal(parsed.vertices.length/3,864) //we divide by three because each entry is 3 long
-      //assert.equal(parsed.children[0].vertices.length, 12)
-      //assert.equal(parsed.children[0].faces.length, 20)
+      //console.log("parsed",parsed.build)
+      //console.log("parsed",JSON.stringify(parsed))
+      assert.equal(Object.keys(parsed.objects).length,17)
+      assert.equal(parsed.objects['1'].positions.length,5232)
+      assert.equal(parsed.objects['1'].indices.length, 10452)
 
       done()
     })

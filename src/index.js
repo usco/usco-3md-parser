@@ -6,9 +6,12 @@ import Rx from 'rx'
 import unpack from './unpack'
 import parseRawXml from './parseRawXml'
 
-import {parseVector3, parseIndices} from './parseHelpers'
+import {parseVector3, parseIndices, createModelBuffers} from './parseHelpers'
 import {makeModel} from './modelHelpers'
 
+
+//TODO: we need to modify the way Jam handles the data , as we do not only return a single geometry/mesh but
+//a full hierarchy etc 
 export default function parse(data, parameters={}){
   const defaults = {
     useWorker: (detectEnv.isBrowser===true)
@@ -32,15 +35,23 @@ export default function parse(data, parameters={}){
     let tag = data.tag
     let unit    = tag.attributes['unit']
     let version = tag.attributes['version']
-    //let currentItem   = rootObject
     return {unit,version}
+  }
+
+  function extractMetadata(data){
+    let tag = data.tag
+
+    console.log("metaData",tag)
+    let name    = tag.attributes['name']
+    let value   = 0
+    let result = {}
+    result[name] = value
+    return result
   }
 
   function vertexCoordinate(data){
     let {tag,start,end} = data
-    //console.log("tag" ,tag)
     let vertexCoords = parseVector3(tag)
-    //currentObject._attributes["position"].push( vertexCoords[0],vertexCoords[1],vertexCoords[2] )
     return vertexCoords
   }
 
@@ -68,6 +79,10 @@ export default function parse(data, parameters={}){
     .filter(d=>d.tag.name === "3mf" && d.start === true)
     .map(threeMFInfo)
 
+  const metadata$ = rawData$
+    .filter(d=>d.tag.name === "metadata" && d.start === true)
+    .map(extractMetadata)
+
   const vCoords$ = rawData$
     .filter(d=>d.tag.name === "vertex" && d.start === true)
     .map(vertexCoordinate)
@@ -82,20 +97,23 @@ export default function parse(data, parameters={}){
   const finishObject$ = rawData$
     .filter(d=>d.tag.name === "object" && d.end === true)
 
-
-  const build$ = rawData$
+  const finishBuild$ = rawData$
     .filter(d=>d.tag.name === "build" && d.end === true)
 
   const item$ = rawData$
     .filter(d=>d.tag.name === "item" && d.start === true)
 
   //
-  /*const build$ = rawData$
-  const item$  = rawData$
+  /*
 
   const components$  = rawData$
   const component$  = rawData$*/
 
+  function metadata(state, input){
+    let metadata = assign({}, state.metadata, input)
+    state.metadata = metadata
+    return state
+  }
 
   function vCoords(state, input){
     state.currentObject._attributes.positions = state.currentObject._attributes.positions.concat(input)
@@ -123,8 +141,8 @@ export default function parse(data, parameters={}){
   }
 
   function finishObject(state, input){
-    state.objects[state.currentObject.id] = state.currentObject
-    
+    state.objects[state.currentObject.id] = createModelBuffers( state.currentObject )
+
     state.currentObject =  {
       id:undefined
       ,_attributes:{
@@ -149,8 +167,15 @@ export default function parse(data, parameters={}){
     return state
   }
 
+  function finishBuild(state,input){
+    state._finished = true
+    return state
+  }
+
   ///
   const actions = {
+    //metadata$
+    
     vCoords$
     ,vIndices$
 
@@ -158,20 +183,27 @@ export default function parse(data, parameters={}){
     ,finishObject$
 
     ,item$
+    ,finishBuild$
   } 
 
   const updateFns = {
-    vCoords
+    metadata
+    
+    ,vCoords
     ,vIndices
 
     ,startObject
     ,finishObject
 
     ,item
+    ,finishBuild
+
+
   }
 
   const defaultData = {
-    objects:{}
+    metadata:{}
+    ,objects:{}
     ,build:[]
 
     ,currentObject:{
@@ -184,19 +216,21 @@ export default function parse(data, parameters={}){
   }
 
   const data$ = makeModel( defaultData, updateFns, actions )
-
-  return data$
-
-  /*return Rx.Observable.merge(rootMeta$, vCoords$, vIndices$, mesh$)
-    .scan(function(cur,input){
-      //console.log("current",cur,input)
-      const out = assign({},cur,input)
-      return out
-    },{})*/
-
-
-
+    /*.last(function (data, idx, obs) {
+      return data._finished === true
+    })*/ //WHY U NO WORK ??
+    .subscribe(function(data){
+      if(data._finished === true){
+        obs.onNext(data)
+      }
+    })
 
   return obs
+
+  /*  const defaults = {
+    useWorker: (detectEnv.isBrowser===true)
+  }
+  parameters = assign({},defaults,parameters)
+  const {useWorker} = parameters*/
 
 }
