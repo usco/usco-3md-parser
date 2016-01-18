@@ -42,6 +42,8 @@ export default function parse(data, parameters={}){
       .subscribe(function(data){
         if(data._finished === true){
           obs.onNext(data)
+          obs.onNext({progress: 1, total:Math.NaN}) 
+          obs.onCompleted()
         }
       })
   }
