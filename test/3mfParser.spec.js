@@ -40,7 +40,7 @@ describe("3MF parser", function() {
   })
 
   it("can parse 3mf files with complex geometry", function(done) {
-    this.timeout(5000)
+    this.timeout(10000)
     let data = fs.readFileSync("test/data/heartgears.3mf",'binary')
     let obs  = parse(data)
    
