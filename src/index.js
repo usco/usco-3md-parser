@@ -41,8 +41,8 @@ export default function parse(data, parameters={}){
       })*/ //WHY U NO WORK ??
       .subscribe(function(data){
         if(data._finished === true){
-          obs.onNext(data)
           obs.onNext({progress: 1, total:Math.NaN}) 
+          obs.onNext(data)
           obs.onCompleted()
         }
       })
