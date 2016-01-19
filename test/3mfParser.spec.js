@@ -100,6 +100,45 @@ describe("3MF parser", function() {
       })
   })
 
+  it("can parse 3mf files with color data ", function(done) {
+    this.timeout(5000)
+    let data = fs.readFileSync("test/data/dodeca_chain_loop_color.3mf",'binary')
+    let obs  = parse(data)
+
+    obs
+      .filter( data => (!data.hasOwnProperty("progress")) ) //filter out progress information
+      .forEach(function(parsed){
+        //console.log("parsed",parsed)
+        assert.deepEqual(parsed.colors,[ '#FF0080FF',
+         '#FFFFFFFF',
+         '#8080FFFF',
+         '#00FF06FF',
+         '#804000FF',
+         '#FCDD03FF',
+         '#00FFFFFF',
+         '#FF00FFFF',
+         '#FFFF00FF' ])
+       
+        done()
+      })
+  })
+
+  /*it("can parse 3mf files with vertex color data ", function(done) {
+    this.timeout(5000)
+    let data = fs.readFileSync("test/data/pyramid_vertexcolor.3mf",'binary')
+    let obs  = parse(data)
+
+    obs
+      .filter( data => (!data.hasOwnProperty("progress")) ) //filter out progress information
+      .forEach(function(parsed){
+        assert.equal(Object.keys(parsed.objects).length,17)
+        assert.equal(parsed.build.length,17)
+        assert.equal(parsed.objects['1'].positions.length,5232)
+        assert.equal(parsed.objects['1'].indices.length, 10452)
+        done()
+      })
+  })*/
+
 
   /*it("should handle errors gracefully", done => {
     let data = {foo:42}
