@@ -108,22 +108,24 @@ describe("3MF parser", function() {
     obs
       .filter( data => (!data.hasOwnProperty("progress")) ) //filter out progress information
       .forEach(function(parsed){
-        //console.log("parsed",parsed)
-        assert.deepEqual(parsed.colors,[ '#FF0080FF',
-         '#FFFFFFFF',
-         '#8080FFFF',
-         '#00FF06FF',
-         '#804000FF',
-         '#FCDD03FF',
-         '#00FFFFFF',
-         '#FF00FFFF',
-         '#FFFF00FF' ])
-       
+        console.log("parsed",parsed.objects['1'].indices.length,parsed.objects['1'].positions.length,parsed.objects['1'].colors.length)
+        assert.deepEqual(parsed.colors,[
+          [ 255, 0, 128, 255 ],
+          [ 255, 255, 255, 255 ],
+          [ 128, 128, 255, 255 ],
+          [ 0, 255, 6, 255 ],
+          [ 128, 64, 0, 255 ],
+          [ 252, 221, 3, 255 ],
+          [ 0, 255, 255, 255 ],
+          [ 255, 0, 255, 255 ],
+          [ 255, 255, 0, 255 ]
+        ])
+
         done()
       })
   })
 
-  /*it("can parse 3mf files with vertex color data ", function(done) {
+  it("can parse 3mf files with vertex color data ", function(done) {
     this.timeout(5000)
     let data = fs.readFileSync("test/data/pyramid_vertexcolor.3mf",'binary')
     let obs  = parse(data)
@@ -131,13 +133,18 @@ describe("3MF parser", function() {
     obs
       .filter( data => (!data.hasOwnProperty("progress")) ) //filter out progress information
       .forEach(function(parsed){
-        assert.equal(Object.keys(parsed.objects).length,17)
-        assert.equal(parsed.build.length,17)
-        assert.equal(parsed.objects['1'].positions.length,5232)
-        assert.equal(parsed.objects['1'].indices.length, 10452)
+        //console.log("parsed",parsed.objects['1'].indices.length,parsed.objects['1'].positions.length)
+        assert.deepEqual(parsed.colors, [ 
+          [ 255, 0, 0, 255 ],
+          [ 0, 0, 255, 255 ],
+          [ 0, 255, 0, 255 ],
+          [ 255, 255, 255, 255 ] ])
+
+        assert.equal(parsed.objects['1'].colors.length,48)
+
         done()
       })
-  })*/
+  })
 
 
   /*it("should handle errors gracefully", done => {
