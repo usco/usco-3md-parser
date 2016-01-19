@@ -33,6 +33,15 @@ function vertexCoordinate(data){
 function vertexIndices(data){
   let {tag,start,end} = data
   let vertexIndices = parseIndices(tag)
+
+  let extraData = ["pid","P1","p2","p3"]
+    .reduce(function(result,key){
+      if(key in tag.attributes){
+        result[key] = tag.attributes[key]
+      }
+      return result 
+    },{}) 
+
   return vertexIndices
 }
 
@@ -47,6 +56,13 @@ function component(data){
     },{}) 
 }
 
+
+function extractColor(data){
+  let {tag} = data
+  let color = tag.attributes['color']
+
+  return color
+}
 
 function makeActions(rawData$){
   const rootMeta$ = rawData$
@@ -77,9 +93,19 @@ function makeActions(rawData$){
   const item$ = rawData$
     .filter(d=>d.tag.name === "item" && d.start)
 
+  //colors & materials
+  const colorgroup$ = rawData$
+    .filter(d=>d.tag.name === "m:colorgroup" && d.end)
+
+  const color$ = rawData$
+    .filter(d=>d.tag.name === "m:color" && d.start)
+    .map(extractColor)
+
   return {
     metadata$
-  
+
+    ,color$
+
     ,vCoords$
     ,vIndices$
 
@@ -95,6 +121,8 @@ function makeReducers(){
 
   const updateFns = {
     metadata
+
+    ,color
     
     ,vCoords
     ,vIndices
@@ -128,10 +156,15 @@ function makeReducers(){
     return state
   }
 
+  function color(state, input){
+    state.colors = state.colors.concat( input )
+    return state
+  }
+
   function startObject(state, input){
     let {tag,start,end} = input
 
-    const object = ["id","name","type"]
+    const object = ["id", "name", "type", "pid"]
       .reduce(function(result,key){
         if(key in tag.attributes){
           result[key] = tag.attributes[key]
@@ -190,6 +223,7 @@ export default function assemble(data){
     metadata:{}
     ,objects:{}
     ,build:[]
+    ,colors:[]
 
     ,currentObject:{
       id:undefined
