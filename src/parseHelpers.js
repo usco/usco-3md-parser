@@ -38,6 +38,15 @@ export function parseColor( node , defaultValue)
   return color
 }
 
+export function hexToRgba(hex){
+  hex = hex.replace('#','')
+  let r = parseInt(hex.substring(0,2), 16)
+  let g = parseInt(hex.substring(2,4), 16)
+  let b = parseInt(hex.substring(4,6), 16)
+  let a = parseInt(hex.substring(6,8), 16)
+  return [r,g,b,a]
+}
+
 export function parseVector3( node, prefix, defaultValue )
 {
   let coords = null
@@ -98,25 +107,46 @@ export function parseMapCoords( node, prefix, defaultValue)
 export function createModelBuffers ( modelData ) {
   //console.log("creating model buffers")//modelData, modelData._attributes)
 
-  let faces     = modelData._attributes.indices.length/3
+  /*let faces     = modelData._attributes.indices.length/3
   let colorSize = 3
 
   //console.log("faces",modelData._attributes.positions.length, modelData._attributes.indices.length, faces)
 
   let positions = new Float32Array( modelData._attributes.positions.length )
   //let normals   = new Float32Array( faces * 3 * 3 )
-  //let colors  = new Float32Array( faces *3 * colorSize )
   let indices   = new Uint32Array( modelData._attributes.indices.length  )
+
+  if(modelData._attributes.colors.length>0){
+    let colors  = new Float32Array( modelData._attributes.colors.length  )
+    colors.set( modelData._attributes.colors )
+  }
 
   //vertices.set( modelData.position );
   //normals.set( modelData.normal );
   //indices.set( modelData.indices );
 
   positions.set( modelData._attributes.positions )
-  //normals.set( modelData._attributes.normal )
-  indices.set( modelData._attributes.indices )
+  //
+  indices.set( modelData._attributes.indices )*/
 
-  return {id:modelData.id, name:modelData.name, positions, indices}
+  let output = ["positions", "normals", "colors", "indices"]
+    .reduce(function(result,key){
+      if(key in modelData._attributes){
+        let data = modelData._attributes[key]
+        
+        let dataBuff = new Float32Array( data.length )
+        dataBuff.set( data )
+
+        result[key] = dataBuff
+      }
+      return result 
+    },{}) 
+
+
+  output.id   = modelData.id
+  output.name = modelData.name
+
+  return output //{id:modelData.id, name:modelData.name, positions, indices}
 
 
   /*console.log("creating model buffers",modelData)

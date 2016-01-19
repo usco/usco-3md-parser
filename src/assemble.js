@@ -4,7 +4,7 @@ import assign from 'fast.js/object/assign'
 import unpack from './unpack'
 import parseRawXml from './parseRawXml'
 
-import {parseVector3, parseIndices, createModelBuffers} from './parseHelpers'
+import {parseVector3, parseIndices, hexToRgba, createModelBuffers} from './parseHelpers'
 import {makeModel} from './modelHelpers'
 
 function threeMFInfo(data){
@@ -32,17 +32,23 @@ function vertexCoordinate(data){
 
 function vertexIndices(data){
   let {tag,start,end} = data
-  let vertexIndices = parseIndices(tag)
+  let vertexIndices = parseIndices(tag) 
+  return vertexIndices
+}
 
-  let extraData = ["pid","P1","p2","p3"]
+function vertexColors(data){
+  let {tag,start,end} = data
+
+  let colorIds = ["pid","p1","p2","p3"]
     .reduce(function(result,key){
       if(key in tag.attributes){
-        result[key] = tag.attributes[key]
+        let value = tag.attributes[key]
+        result[key] = parseInt(value)
       }
       return result 
     },{}) 
 
-  return vertexIndices
+  return colorIds
 }
 
 function component(data){
@@ -60,6 +66,9 @@ function component(data){
 function extractColor(data){
   let {tag} = data
   let color = tag.attributes['color']
+  if(color){
+    color = hexToRgba(color)
+  }
 
   return color
 }
@@ -77,9 +86,17 @@ function makeActions(rawData$){
     .filter(d=>d.tag.name === "vertex" && d.start)
     .map(vertexCoordinate)
 
-  const vIndices$ = rawData$
+
+  const triangle$ = rawData$
     .filter(d=>d.tag.name === "triangle" && d.start)
+    .share()
+
+  const vIndices$ = triangle$
     .map(vertexIndices)
+
+  const vColors$ = triangle$
+    .filter( data => ( data.tag.attributes.hasOwnProperty("pid") && ( data.tag.attributes.hasOwnProperty("p1") || data.tag.attributes.hasOwnProperty("p2") || data.tag.attributes.hasOwnProperty("p3") ) ) ) 
+    .map(vertexColors)
 
   const startObject$ = rawData$
     .filter(d=>d.tag.name === "object" && d.start)
@@ -108,6 +125,7 @@ function makeActions(rawData$){
 
     ,vCoords$
     ,vIndices$
+    ,vColors$
 
     ,startObject$
     ,finishObject$
@@ -126,6 +144,7 @@ function makeReducers(){
     
     ,vCoords
     ,vIndices
+    ,vColors
 
     ,startObject
     ,finishObject
@@ -155,9 +174,24 @@ function makeReducers(){
     state.currentObject._attributes.indices = state.currentObject._attributes.indices.concat(input)
     return state
   }
+  function vColors(state, input){
+    //FIXME: deal with color GROUPS
+    //console.log("vColors",input)
+    let p1color = state.colors[input.p1]//not sure
+    let p2color = state.colors[input.p2]//not sure
+    let p3color = state.colors[input.p3]//not sure
+
+    let color   = p1color.concat(p2color).concat(p3color)
+      .filter(e=>e!==undefined)
+    //console.log("vColors2",color)
+
+    state.currentObject._attributes.colors = state.currentObject._attributes.colors.concat(color)
+    return state
+  }
 
   function color(state, input){
-    state.colors = state.colors.concat( input )
+    //state.colors = state.colors.concat( input )
+    state.colors.push(input)
     return state
   }
 
@@ -171,7 +205,6 @@ function makeReducers(){
         }
         return result 
       },{}) 
-
     state.currentObject = assign({}, state.currentObject, object)   
     return state
   }
@@ -185,6 +218,7 @@ function makeReducers(){
       ,_attributes:{
         positions:[]
         ,indices:[]
+        ,colors:[]
       }
     }
     return state
@@ -230,6 +264,7 @@ export default function assemble(data){
       ,_attributes:{
         positions:[]
         ,indices:[]
+        ,colors:[]
       }
     }
   }
