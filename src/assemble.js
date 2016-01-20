@@ -69,8 +69,22 @@ function extractColor(data){
   if(color){
     color = hexToRgba(color)
   }
-
   return color
+}
+
+function extractColorGroup(data){
+  let {tag} = data
+
+  let colorgroupData = ["id"]
+    .reduce(function(result,key){
+      if(key in tag.attributes){
+        let value = tag.attributes[key]
+        result[key] = parseInt(value)
+      }
+      return result 
+    },{}) 
+
+  return colorgroupData
 }
 
 function makeActions(rawData$){
@@ -111,8 +125,9 @@ function makeActions(rawData$){
     .filter(d=>d.tag.name === "item" && d.start)
 
   //colors & materials
-  const colorgroup$ = rawData$
+  const colorGroup$ = rawData$
     .filter(d=>d.tag.name === "m:colorgroup" && d.end)
+    .map(extractColorGroup)
 
   const color$ = rawData$
     .filter(d=>d.tag.name === "m:color" && d.start)
@@ -122,6 +137,7 @@ function makeActions(rawData$){
     metadata$
 
     ,color$
+    ,colorGroup$
 
     ,vCoords$
     ,vIndices$
@@ -141,6 +157,7 @@ function makeReducers(){
     metadata
 
     ,color
+    ,colorGroup
     
     ,vCoords
     ,vIndices
@@ -177,9 +194,11 @@ function makeReducers(){
   function vColors(state, input){
     //FIXME: deal with color GROUPS
     //console.log("vColors",input)
-    let p1color = state.colors[input.p1]//not sure
-    let p2color = state.colors[input.p2]//not sure
-    let p3color = state.colors[input.p3]//not sure
+    let colorGroup = state.colors[input.pid]
+
+    let p1color = colorGroup[input.p1]//not sure
+    let p2color = colorGroup[input.p2]//not sure
+    let p3color = colorGroup[input.p3]//not sure
 
     let color   = p1color.concat(p2color).concat(p3color)
       .filter(e=>e!==undefined)
@@ -191,7 +210,13 @@ function makeReducers(){
 
   function color(state, input){
     //state.colors = state.colors.concat( input )
-    state.colors.push(input)
+    state.currentColorGroup.push(input)
+    return state
+  }
+
+  function colorGroup(state, input){
+    state.colors[input.id] = state.currentColorGroup
+    state.currentColorGroup=[]
     return state
   }
 
@@ -257,7 +282,7 @@ export default function assemble(data){
     metadata:{}
     ,objects:{}
     ,build:[]
-    ,colors:[]
+    ,colors:{}
 
     ,currentObject:{
       id:undefined
@@ -267,6 +292,8 @@ export default function assemble(data){
         ,colors:[]
       }
     }
+
+    ,currentColorGroup:[]
   }
 
   const actions = makeActions(rawData$)

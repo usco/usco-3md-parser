@@ -108,8 +108,9 @@ describe("3MF parser", function() {
     obs
       .filter( data => (!data.hasOwnProperty("progress")) ) //filter out progress information
       .forEach(function(parsed){
-        console.log("parsed",parsed.objects['1'].indices.length,parsed.objects['1'].positions.length,parsed.objects['1'].colors.length)
-        assert.deepEqual(parsed.colors,[
+        //console.log("parsed",parsed.objects['1'].indices.length,parsed.objects['1'].colors.length)
+        //console.log("parsed",parsed.objects['1'].colors)
+        assert.deepEqual(parsed.colors,{'2':[
           [ 255, 0, 128, 255 ],
           [ 255, 255, 255, 255 ],
           [ 128, 128, 255, 255 ],
@@ -119,7 +120,7 @@ describe("3MF parser", function() {
           [ 0, 255, 255, 255 ],
           [ 255, 0, 255, 255 ],
           [ 255, 255, 0, 255 ]
-        ])
+        ]})
 
         done()
       })
@@ -134,11 +135,11 @@ describe("3MF parser", function() {
       .filter( data => (!data.hasOwnProperty("progress")) ) //filter out progress information
       .forEach(function(parsed){
         //console.log("parsed",parsed.objects['1'].indices.length,parsed.objects['1'].positions.length)
-        assert.deepEqual(parsed.colors, [ 
+        assert.deepEqual(parsed.colors, {'2':[ 
           [ 255, 0, 0, 255 ],
           [ 0, 0, 255, 255 ],
           [ 0, 255, 0, 255 ],
-          [ 255, 255, 255, 255 ] ])
+          [ 255, 255, 255, 255 ] ]})
 
         assert.equal(parsed.objects['1'].colors.length,48)
 
