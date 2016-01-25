@@ -190,10 +190,12 @@ function makeReducers(){
     //state = assign(state, )
     return state
   }
+
   function vIndices(state, input){
     state.currentObject._attributes.indices = state.currentObject._attributes.indices.concat(input)
     return state
   }
+
   function vColors(state, input){
     //FIXME: deal with color GROUPS
     //console.log("vColors",input)
@@ -208,22 +210,9 @@ function makeReducers(){
 
     let colors = []
 
-    const v0Index = input[0]//first vertex INDEX
-    const v1Index = input[1]//second vertex INDEX
-    const v2Index = input[2]//third vertex INDEX
-
-    const  v0ColorIndex = v0Index
-    const  v1ColorIndex = v1Index
-    const  v2ColorIndex = v2Index
-    //console.log("indices",v0Index, v1Index, v2Index)
-
-    //console.log("v0ColorIndex",v0ColorIndex, v1ColorIndex, v2ColorIndex)
-
     function assignAtIndex(target, startIndex, data){
       for(let i=0;i<4;i++){
-        
         target[startIndex+i] = data[i]
-        //console.log("startIndex",startIndex,"index",startIndex+i,"value",data[i])
       }
     }
 
@@ -233,7 +222,7 @@ function makeReducers(){
         assignAtIndex(target, cindex*4, data[index])
       }) 
     }
-    const colorIndices = [v0ColorIndex, v1ColorIndex, v2ColorIndex]
+    const colorIndices = [input[0], input[1], input[2]]
 
     /*if(state.currentObject._attributes.colors.length ===0){
       state.currentObject._attributes.colors = new Array(7)
@@ -243,21 +232,13 @@ function makeReducers(){
       //colors = colorGroup[input.p1].concat( colorGroup[input.p2], colorGroup[input.p3] )
       const values = [colorGroup[input.p1], colorGroup[input.p2], colorGroup[input.p3]]
       assignAllAtIndices(state.currentObject._attributes.colors, colorIndices, values)
-      /*state.currentObject._attributes.colors[v0ColorIndex] = colorGroup[input.p1]
-      state.currentObject._attributes.colors[v1ColorIndex] = colorGroup[input.p2]
-      state.currentObject._attributes.colors[v2ColorIndex] = colorGroup[input.p3]*/
-
     }else if(p1Decides){
       const p1Color = colorGroup[input.p1]
       //colors = p1Color.concat( p1Color, p1Color )
-      //state.currentObject._attributes.colors[v0ColorIndex] = p1Color
-      //state.currentObject._attributes.colors[v1ColorIndex] = p1Color
-      //state.currentObject._attributes.colors[v2ColorIndex] = p1Color
       const values = [p1Color,p1Color,p1Color]
       assignAllAtIndices(state.currentObject._attributes.colors, colorIndices, values)
     }
 
-    //console.log("vColors2",colors)
     if(colors.length >0 ){
       //state.currentObject._attributes.colors = state.currentObject._attributes.colors.concat(colors)
     }
@@ -275,6 +256,13 @@ function makeReducers(){
     state.colors[input.id] = state.currentColorGroup
     state.currentColorGroup=[]
     return state
+  }
+
+  function normals(state, input){
+    //see specs : A triangle face normal (for triangle ABC, in that order) throughout this specification is defined as
+    //a unit vector in the direction of the vector cross product (B - A) x (C - A).
+    //(B - A) x (C - A).
+    const normalIndices = [input[0], input[1], input[2]]
   }
 
   function startObject(state, input){
