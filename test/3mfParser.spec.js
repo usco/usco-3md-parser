@@ -122,6 +122,8 @@ describe("3MF parser", function() {
           [ 1, 1, 0, 1 ]
         ]})
 
+        assert.equal(parsed.objects['1'].colors.length, 12160)
+
         done()
       })
   })
@@ -141,7 +143,7 @@ describe("3MF parser", function() {
           [ 0, 1, 0, 1 ],
           [ 1, 1, 1, 1 ] ]})
 
-        assert.equal(parsed.objects['1'].colors.length,48)
+        assert.equal(parsed.objects['1'].colors.length, 16)
 
         done()
       })
