@@ -131,15 +131,17 @@ export function createModelBuffers ( modelData ) {
   //indices.set( modelData.indices );
 
   positions.set( modelData._attributes.positions )
-  //
   indices.set( modelData._attributes.indices )*/
 
+  //other implementation
+  const dataTypes = {"positions":Float32Array, "indices":Uint32Array, "normals":Float32Array, "colors":Float32Array}
+  
   let output = ["positions", "normals", "colors", "indices"]
     .reduce(function(result,key){
       if(key in modelData._attributes){
         let data = modelData._attributes[key]
         
-        let dataBuff = new Float32Array( data.length )
+        let dataBuff = new dataTypes[key]( data.length )
         dataBuff.set( data )
 
         result[key] = dataBuff
@@ -151,6 +153,7 @@ export function createModelBuffers ( modelData ) {
   output.id   = modelData.id
   output.name = modelData.name
 
+  //console.log("here", output.positions, positions, output.indices, indices)
   return output //{id:modelData.id, name:modelData.name, positions, indices}
 
 
@@ -169,19 +172,6 @@ export function createModelBuffers ( modelData ) {
   indices.set( modelData._attributes.indices )
   colors.set( modelData._attributes.vcolors )
 
-  var geometry = new THREE.BufferGeometry()
-  geometry.addAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) )
-  //geometry.addAttribute( 'normal', new THREE.BufferAttribute( normals, 3 ) )
-  geometry.addAttribute( 'index', new THREE.BufferAttribute( indices, 1 ) )
-  geometry.addAttribute( 'color', new THREE.BufferAttribute( colors, colorSize ) )
-  
-  if(this.recomputeNormals)
-  {
-    //TODO: only do this, if no normals were specified???
-    geometry.computeFaceNormals()
-    geometry.computeVertexNormals()
-  }*/
-  
   /*var vs = require('./vertShader.vert')()
   var fs = require('./fragShader.frag')()
   
