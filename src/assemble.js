@@ -48,7 +48,9 @@ function vertexColors(data){
       return result 
     },{}) 
 
-  return colorIds
+  const output = assign({},colorIds,vertexIndices(data))
+  return output
+  //return colorIds
 }
 
 function component(data){
@@ -197,15 +199,69 @@ function makeReducers(){
     //console.log("vColors",input)
     let colorGroup = state.colors[input.pid]
 
-    let p1color = colorGroup[input.p1]//not sure
-    let p2color = colorGroup[input.p2]//not sure
-    let p3color = colorGroup[input.p3]//not sure
+    const p1 = 'p1' in input 
+    const p2 = 'p2' in input
+    const p3 = 'p3' in input
 
-    let color   = p1color.concat(p2color).concat(p3color)
-      .filter(e=>e!==undefined)
-    //console.log("vColors2",color)
+    const p1Decides = p1 && ! p2 && ! p3
+    const allP      = p1 && p2 && p3 
 
-    state.currentObject._attributes.colors = state.currentObject._attributes.colors.concat(color)
+    let colors = []
+
+    const v0Index = input[0]//first vertex INDEX
+    const v1Index = input[1]//second vertex INDEX
+    const v2Index = input[2]//third vertex INDEX
+
+    const  v0ColorIndex = v0Index
+    const  v1ColorIndex = v1Index
+    const  v2ColorIndex = v2Index
+    //console.log("indices",v0Index, v1Index, v2Index)
+
+    //console.log("v0ColorIndex",v0ColorIndex, v1ColorIndex, v2ColorIndex)
+
+    function assignAtIndex(target, startIndex, data){
+      for(let i=0;i<4;i++){
+        
+        target[startIndex+i] = data[i]
+        //console.log("startIndex",startIndex,"index",startIndex+i,"value",data[i])
+      }
+    }
+
+    function assignAllAtIndices(target, indices, data){
+      indices.forEach(function(cindex,index){
+        //console.log("assignAllAtIndices target",target,"indices", indices,"index", cindex,"data",data, "indexData",  data[index])
+        assignAtIndex(target, cindex*4, data[index])
+      }) 
+    }
+    const colorIndices = [v0ColorIndex, v1ColorIndex, v2ColorIndex]
+
+    /*if(state.currentObject._attributes.colors.length ===0){
+      state.currentObject._attributes.colors = new Array(7)
+    }*/
+
+    if(allP){
+      //colors = colorGroup[input.p1].concat( colorGroup[input.p2], colorGroup[input.p3] )
+      const values = [colorGroup[input.p1], colorGroup[input.p2], colorGroup[input.p3]]
+      assignAllAtIndices(state.currentObject._attributes.colors, colorIndices, values)
+      /*state.currentObject._attributes.colors[v0ColorIndex] = colorGroup[input.p1]
+      state.currentObject._attributes.colors[v1ColorIndex] = colorGroup[input.p2]
+      state.currentObject._attributes.colors[v2ColorIndex] = colorGroup[input.p3]*/
+
+    }else if(p1Decides){
+      const p1Color = colorGroup[input.p1]
+      //colors = p1Color.concat( p1Color, p1Color )
+      //state.currentObject._attributes.colors[v0ColorIndex] = p1Color
+      //state.currentObject._attributes.colors[v1ColorIndex] = p1Color
+      //state.currentObject._attributes.colors[v2ColorIndex] = p1Color
+      const values = [p1Color,p1Color,p1Color]
+      assignAllAtIndices(state.currentObject._attributes.colors, colorIndices, values)
+    }
+
+    //console.log("vColors2",colors)
+    if(colors.length >0 ){
+      //state.currentObject._attributes.colors = state.currentObject._attributes.colors.concat(colors)
+    }
+
     return state
   }
 
