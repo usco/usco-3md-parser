@@ -47,6 +47,11 @@ export function hexToRgba(hex){
   return [r,g,b,a]
 }
 
+//normalize 0-255 values to 0-1
+export function normalizeRgba(rgba){
+  return rgba.map(v=>( +(v/255).toFixed(2) ) ) 
+}
+
 export function parseVector3( node, prefix, defaultValue )
 {
   let coords = null

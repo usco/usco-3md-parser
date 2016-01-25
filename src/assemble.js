@@ -4,7 +4,7 @@ import assign from 'fast.js/object/assign'
 import unpack from './unpack'
 import parseRawXml from './parseRawXml'
 
-import {parseVector3, parseIndices, hexToRgba, createModelBuffers} from './parseHelpers'
+import {parseVector3, parseIndices, hexToRgba, normalizeRgba, createModelBuffers} from './parseHelpers'
 import {makeModel} from './modelHelpers'
 
 function threeMFInfo(data){
@@ -68,6 +68,7 @@ function extractColor(data){
   let color = tag.attributes['color']
   if(color){
     color = hexToRgba(color)
+    color = normalizeRgba(color)
   }
   return color
 }

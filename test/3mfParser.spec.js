@@ -111,15 +111,15 @@ describe("3MF parser", function() {
         //console.log("parsed",parsed.objects['1'].indices.length,parsed.objects['1'].colors.length)
         //console.log("parsed",parsed.objects['1'].colors)
         assert.deepEqual(parsed.colors,{'2':[
-          [ 255, 0, 128, 255 ],
-          [ 255, 255, 255, 255 ],
-          [ 128, 128, 255, 255 ],
-          [ 0, 255, 6, 255 ],
-          [ 128, 64, 0, 255 ],
-          [ 252, 221, 3, 255 ],
-          [ 0, 255, 255, 255 ],
-          [ 255, 0, 255, 255 ],
-          [ 255, 255, 0, 255 ]
+          [ 1, 0, 0.5, 1 ],
+          [ 1, 1, 1, 1 ],
+          [ 0.5, 0.5, 1, 1 ],
+          [ 0, 1, 0.02, 1 ],
+          [ 0.5, 0.25, 0, 1 ],
+          [ 0.99, 0.87, 0.01, 1 ],
+          [ 0, 1, 1, 1 ],
+          [ 1, 0, 1, 1 ],
+          [ 1, 1, 0, 1 ]
         ]})
 
         done()
@@ -136,10 +136,10 @@ describe("3MF parser", function() {
       .forEach(function(parsed){
         //console.log("parsed",parsed.objects['1'].indices.length,parsed.objects['1'].positions.length)
         assert.deepEqual(parsed.colors, {'2':[ 
-          [ 255, 0, 0, 255 ],
-          [ 0, 0, 255, 255 ],
-          [ 0, 255, 0, 255 ],
-          [ 255, 255, 255, 255 ] ]})
+          [ 1, 0, 0, 1 ],
+          [ 0, 0, 1, 1 ],
+          [ 0, 1, 0, 1 ],
+          [ 1, 1, 1, 1 ] ]})
 
         assert.equal(parsed.objects['1'].colors.length,48)
 
