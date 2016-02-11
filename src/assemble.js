@@ -115,6 +115,9 @@ function makeActions(rawData$){
     .filter( data => ( data.tag.attributes.hasOwnProperty("pid") && ( data.tag.attributes.hasOwnProperty("p1") || data.tag.attributes.hasOwnProperty("p2") || data.tag.attributes.hasOwnProperty("p3") ) ) ) 
     .map(vertexColors)
 
+  const vNormals$ = triangle$
+    .map(vertexIndices)
+
   const startObject$ = rawData$
     .filter(d=>d.tag.name === "object" && d.start)
    
@@ -144,6 +147,7 @@ function makeActions(rawData$){
 
     ,vCoords$
     ,vIndices$
+    ,vNormals$
     ,vColors$
 
     ,startObject$
@@ -164,6 +168,7 @@ function makeReducers(){
     
     ,vCoords
     ,vIndices
+    ,vNormals
     ,vColors
 
     ,startObject
@@ -193,6 +198,62 @@ function makeReducers(){
 
   function vIndices(state, input){
     state.currentObject._attributes.indices = state.currentObject._attributes.indices.concat(input)
+    return state
+  }
+
+  function vNormals(state, input){
+    //see specs : A triangle face normal (for triangle ABC, in that order) throughout this specification is defined as
+    //a unit vector in the direction of the vector cross product (B - A) x (C - A).
+    //(B - A) x (C - A).
+    //const normalIndices = [input[0], input[1], input[2]]
+    //console.log("input",input, state.currentObject )
+    const positions = state.currentObject._attributes.positions
+    
+    const A      = [ positions[ input[0] ], positions[ input[0]+1] , positions[ input[0]+2] ]
+    const B      = [ positions[ input[1] ], positions[ input[1]+1] , positions[ input[1]+2] ]
+    const C      = [ positions[ input[2] ], positions[ input[2]+1] , positions[ input[2]+2] ]
+
+
+    function cross(a,b){
+      let ax = a[0], ay = a[1], az = a[2]
+      let bx = b[0], by = b[1], bz = b[2]
+
+      let x = ay * bz - az * by
+      let y = az * bx - ax * bz
+      let z = ax * by - ay * bx 
+      return [x,y,z]
+    }
+    function sub(a,b){
+      return [
+        a[0] - b[0]
+        , a[1] - b[1]
+        , a[2] - b[2]
+      ]
+    }
+
+    function length(v){
+      return Math.sqrt( v[0] * v[0] + v[1] * v[1] + v[2] * v[2] )
+    }
+
+    function multiplyScalar(v, s){
+      return [ v[0] * s , v[1] * s , v[2] * s ]
+    }
+    function divideScalar(vector, scalar){
+      return multiplyScalar( vector, (1 / scalar) )
+    }
+
+    function normalize(v){
+      return divideScalar( v, length(v) )
+    }
+
+    const normal = normalize( cross( sub(B,A), sub(C,A) ) )
+
+    //const normal = (B - A) * (C - A)
+    //console.log("A",A,"B",B,"C",C)
+    //console.log("normal basic",normal)
+
+    state.currentObject._attributes.normals = state.currentObject._attributes.normals.concat(normal)
+
     return state
   }
 
@@ -258,13 +319,6 @@ function makeReducers(){
     return state
   }
 
-  function normals(state, input){
-    //see specs : A triangle face normal (for triangle ABC, in that order) throughout this specification is defined as
-    //a unit vector in the direction of the vector cross product (B - A) x (C - A).
-    //(B - A) x (C - A).
-    const normalIndices = [input[0], input[1], input[2]]
-  }
-
   function startObject(state, input){
     let {tag,start,end} = input
 
@@ -287,6 +341,7 @@ function makeReducers(){
       ,name:undefined
       ,_attributes:{
         positions:[]
+        ,normals:[]
         ,indices:[]
         ,colors:[]
       }
@@ -333,6 +388,7 @@ export default function assemble(data){
       id:undefined
       ,_attributes:{
         positions:[]
+        ,normals:[]
         ,indices:[]
         ,colors:[]
       }
