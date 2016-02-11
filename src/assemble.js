@@ -103,7 +103,6 @@ function makeActions(rawData$){
     .filter(d=>d.tag.name === "vertex" && d.start)
     .map(vertexCoordinate)
 
-
   const triangle$ = rawData$
     .filter(d=>d.tag.name === "triangle" && d.start)
     .share()
@@ -117,6 +116,10 @@ function makeActions(rawData$){
 
   const vNormals$ = triangle$
     .map(vertexIndices)
+
+  const vCoords2$ = triangle$
+    .map(vertexIndices)
+
 
   const startObject$ = rawData$
     .filter(d=>d.tag.name === "object" && d.start)
@@ -146,6 +149,7 @@ function makeActions(rawData$){
     ,colorGroup$
 
     ,vCoords$
+    ,vCoords2$
     ,vIndices$
     ,vNormals$
     ,vColors$
@@ -167,6 +171,7 @@ function makeReducers(){
     ,colorGroup
     
     ,vCoords
+    ,vCoords2
     ,vIndices
     ,vNormals
     ,vColors
@@ -191,8 +196,20 @@ function makeReducers(){
   }
 
   function vCoords(state, input){
-    state.currentObject._attributes.positions = state.currentObject._attributes.positions.concat(input)
+    state.currentObject.positions = state.currentObject.positions.concat(input)
     //state = assign(state, )
+    //console.log("positions",input, state.currentObject.positions)
+    return state
+  }
+
+  function vCoords2(state, input){
+    const positions = state.currentObject.positions
+    const A      = [ positions[ input[0]*3 ], positions[ input[0]*3+1] , positions[ input[0]*3+2] ]
+    const B      = [ positions[ input[1]*3 ], positions[ input[1]*3+1] , positions[ input[1]*3+2] ]
+    const C      = [ positions[ input[2]*3 ], positions[ input[2]*3+1] , positions[ input[2]*3+2] ]
+
+    //console.log("positions 2",positions, A, B, C)
+    state.currentObject._attributes.positions = state.currentObject._attributes.positions.concat(A).concat(B).concat(C)
     return state
   }
 
@@ -206,7 +223,7 @@ function makeReducers(){
     //a unit vector in the direction of the vector cross product (B - A) x (C - A).
     //(B - A) x (C - A).
     const normalIndices = [input[0], input[1], input[2]]
-    const positions = state.currentObject._attributes.positions
+    const positions = state.currentObject.positions
     
     const A      = [ positions[ input[0]*3 ], positions[ input[0]*3+1] , positions[ input[0]*3+2] ]
     const B      = [ positions[ input[1]*3 ], positions[ input[1]*3+1] , positions[ input[1]*3+2] ]
@@ -264,8 +281,8 @@ function makeReducers(){
       }) 
     }
 
-    //state.currentObject._attributes.normals = state.currentObject._attributes.normals.concat(normal)
-    assignAllAtIndices(state.currentObject._attributes.normals, normalIndices, normal)
+    state.currentObject._attributes.normals = state.currentObject._attributes.normals.concat(normal).concat(normal).concat(normal)
+    //assignAllAtIndices(state.currentObject._attributes.normals, normalIndices, normal)
 
     /*state.currentObject._attributes.normals[ input[0]*3 ] = normal[0]
     state.currentObject._attributes.normals[ input[0]*3 +1 ] = normal[1]
@@ -316,18 +333,19 @@ function makeReducers(){
     }*/
 
     if(allP){
-      //colors = colorGroup[input.p1].concat( colorGroup[input.p2], colorGroup[input.p3] )
-      const values = [colorGroup[input.p1], colorGroup[input.p2], colorGroup[input.p3]]
-      assignAllAtIndices(state.currentObject._attributes.colors, colorIndices, values)
+      colors = colorGroup[input.p1].concat( colorGroup[input.p2], colorGroup[input.p3] )
+      //const values = [colorGroup[input.p1], colorGroup[input.p2], colorGroup[input.p3]]
+      //assignAllAtIndices(state.currentObject._attributes.colors, colorIndices, values)
     }else if(p1Decides){
       const p1Color = colorGroup[input.p1]
-      //colors = p1Color.concat( p1Color, p1Color )
-      const values = [p1Color,p1Color,p1Color]
-      assignAllAtIndices(state.currentObject._attributes.colors, colorIndices, values)
+      colors = p1Color.concat( p1Color, p1Color )
+      
+      //const values = [p1Color,p1Color,p1Color]
+      //assignAllAtIndices(state.currentObject._attributes.colors, colorIndices, values)
     }
 
     if(colors.length >0 ){
-      //state.currentObject._attributes.colors = state.currentObject._attributes.colors.concat(colors)
+      state.currentObject._attributes.colors = state.currentObject._attributes.colors.concat(colors)
     }
 
     return state
@@ -365,6 +383,8 @@ function makeReducers(){
     state.currentObject =  {
       id:undefined
       ,name:undefined
+
+      ,positions:[]
       ,_attributes:{
         positions:[]
         ,normals:[]
@@ -412,6 +432,8 @@ export default function assemble(data){
 
     ,currentObject:{
       id:undefined
+      ,positions:[]
+
       ,_attributes:{
         positions:[]
         ,normals:[]
