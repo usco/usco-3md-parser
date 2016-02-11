@@ -205,14 +205,14 @@ function makeReducers(){
     //see specs : A triangle face normal (for triangle ABC, in that order) throughout this specification is defined as
     //a unit vector in the direction of the vector cross product (B - A) x (C - A).
     //(B - A) x (C - A).
-    //const normalIndices = [input[0], input[1], input[2]]
-    //console.log("input",input, state.currentObject )
+    const normalIndices = [input[0], input[1], input[2]]
     const positions = state.currentObject._attributes.positions
     
-    const A      = [ positions[ input[0] ], positions[ input[0]+1] , positions[ input[0]+2] ]
-    const B      = [ positions[ input[1] ], positions[ input[1]+1] , positions[ input[1]+2] ]
-    const C      = [ positions[ input[2] ], positions[ input[2]+1] , positions[ input[2]+2] ]
+    const A      = [ positions[ input[0]*3 ], positions[ input[0]*3+1] , positions[ input[0]*3+2] ]
+    const B      = [ positions[ input[1]*3 ], positions[ input[1]*3+1] , positions[ input[1]*3+2] ]
+    const C      = [ positions[ input[2]*3 ], positions[ input[2]*3+1] , positions[ input[2]*3+2] ]
 
+    //console.log("indices",normalIndices,input[0], positions, "A",A,"B",B,"C",C)
 
     function cross(a,b){
       let ax = a[0], ay = a[1], az = a[2]
@@ -249,11 +249,38 @@ function makeReducers(){
     const normal = normalize( cross( sub(B,A), sub(C,A) ) )
 
     //const normal = (B - A) * (C - A)
-    //console.log("A",A,"B",B,"C",C)
     //console.log("normal basic",normal)
 
-    state.currentObject._attributes.normals = state.currentObject._attributes.normals.concat(normal)
+    function assignAtIndex(target, startIndex, data){
+      for(let i=0;i<3;i++){
+        console.log("assign",target, startIndex,data, data[i])
+        target[startIndex+i] = data[i]
+      }
+    }
 
+    function assignAllAtIndices(target, indices, data){
+      indices.forEach(function(cindex){
+        assignAtIndex(target, cindex*3, data)
+      }) 
+    }
+
+    //state.currentObject._attributes.normals = state.currentObject._attributes.normals.concat(normal)
+    assignAllAtIndices(state.currentObject._attributes.normals, normalIndices, normal)
+
+    /*state.currentObject._attributes.normals[ input[0]*3 ] = normal[0]
+    state.currentObject._attributes.normals[ input[0]*3 +1 ] = normal[1]
+    state.currentObject._attributes.normals[ input[0]*3 +2 ] = normal[2]
+
+    state.currentObject._attributes.normals[ input[1]*3 ] = normal[0]
+    state.currentObject._attributes.normals[ input[1]*3 +1 ] = normal[1]
+    state.currentObject._attributes.normals[ input[1]*3 +2 ] = normal[2]
+
+    state.currentObject._attributes.normals[ input[2]*3 ] = normal[0]
+    state.currentObject._attributes.normals[ input[2]*3 +1 ] = normal[1]
+    state.currentObject._attributes.normals[ input[2]*3 +2 ] = normal[2]*/
+
+
+    //console.log("normal",normal,"face",input,  "A",A,"B",B,"C",C)
     return state
   }
 
@@ -279,7 +306,6 @@ function makeReducers(){
 
     function assignAllAtIndices(target, indices, data){
       indices.forEach(function(cindex,index){
-        //console.log("assignAllAtIndices target",target,"indices", indices,"index", cindex,"data",data, "indexData",  data[index])
         assignAtIndex(target, cindex*4, data[index])
       }) 
     }
