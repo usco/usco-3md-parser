@@ -50,7 +50,6 @@ function vertexColors(data){
 
   const output = assign({},colorIds,vertexIndices(data))
   return output
-  //return colorIds
 }
 
 function component(data){
@@ -265,9 +264,6 @@ function makeReducers(){
 
     const normal = normalize( cross( sub(B,A), sub(C,A) ) )
 
-    //const normal = (B - A) * (C - A)
-    //console.log("normal basic",normal)
-
     function assignAtIndex(target, startIndex, data){
       for(let i=0;i<3;i++){
         console.log("assign",target, startIndex,data, data[i])
@@ -282,22 +278,7 @@ function makeReducers(){
     }
 
     state.currentObject._attributes.normals = state.currentObject._attributes.normals.concat(normal).concat(normal).concat(normal)
-    //assignAllAtIndices(state.currentObject._attributes.normals, normalIndices, normal)
-
-    /*state.currentObject._attributes.normals[ input[0]*3 ] = normal[0]
-    state.currentObject._attributes.normals[ input[0]*3 +1 ] = normal[1]
-    state.currentObject._attributes.normals[ input[0]*3 +2 ] = normal[2]
-
-    state.currentObject._attributes.normals[ input[1]*3 ] = normal[0]
-    state.currentObject._attributes.normals[ input[1]*3 +1 ] = normal[1]
-    state.currentObject._attributes.normals[ input[1]*3 +2 ] = normal[2]
-
-    state.currentObject._attributes.normals[ input[2]*3 ] = normal[0]
-    state.currentObject._attributes.normals[ input[2]*3 +1 ] = normal[1]
-    state.currentObject._attributes.normals[ input[2]*3 +2 ] = normal[2]*/
-
-
-    //console.log("normal",normal,"face",input,  "A",A,"B",B,"C",C)
+  
     return state
   }
 

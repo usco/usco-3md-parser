@@ -108,35 +108,12 @@ export function parseMapCoords( node, prefix, defaultValue)
 }
 
 
-
 export function createModelBuffers ( modelData ) {
   //console.log("creating model buffers")//modelData, modelData._attributes)
-
-  /*let faces     = modelData._attributes.indices.length/3
-  let colorSize = 3
-
-  //console.log("faces",modelData._attributes.positions.length, modelData._attributes.indices.length, faces)
-
-  let positions = new Float32Array( modelData._attributes.positions.length )
-  //let normals   = new Float32Array( faces * 3 * 3 )
-  let indices   = new Uint32Array( modelData._attributes.indices.length  )
-
-  if(modelData._attributes.colors.length>0){
-    let colors  = new Float32Array( modelData._attributes.colors.length  )
-    colors.set( modelData._attributes.colors )
-  }
-
-  //vertices.set( modelData.position );
-  //normals.set( modelData.normal );
-  //indices.set( modelData.indices );
-
-  positions.set( modelData._attributes.positions )
-  indices.set( modelData._attributes.indices )*/
-
   //other implementation
   const dataTypes = {"positions":Float32Array, "indices":Uint32Array, "normals":Float32Array, "colors":Float32Array}
   
-  let output = ["positions", "normals", "colors", "indices"]
+  let output = ["positions", "normals", "colors"]//, "indices"]
     .reduce(function(result,key){
       if(key in modelData._attributes){
         let data = modelData._attributes[key]
@@ -149,46 +126,8 @@ export function createModelBuffers ( modelData ) {
       return result 
     },{}) 
 
-
   output.id   = modelData.id
   output.name = modelData.name
 
-  //console.log("here", output.positions, positions, output.indices, indices)
-  return output //{id:modelData.id, name:modelData.name, positions, indices}
-
-
-  /*console.log("creating model buffers",modelData)
-  
-  var faces = modelData.faceCount
-  var colorSize =3
-  
-  var vertices = new Float32Array( faces * 3 * 3 )
-  var normals = new Float32Array( faces * 3 * 3 )
-  var colors = new Float32Array( faces *3 * colorSize )
-  var indices = new Uint32Array( faces * 3  )
-  
-  vertices.set( modelData._attributes.position )
-  normals.set( modelData._attributes.normal )
-  indices.set( modelData._attributes.indices )
-  colors.set( modelData._attributes.vcolors )
-
-  /*var vs = require('./vertShader.vert')()
-  var fs = require('./fragShader.frag')()
-  
-  var material = new THREE.RawShaderMaterial( {
-
-          uniforms: {
-            time: { type: "f", value: 1.0 }
-          },
-          vertexShader: vs,
-          fragmentShader: fs,
-          side: THREE.DoubleSide,
-          transparent: true
-
-        } )
-
-  var color = this.defaultColor 
-  var material = new this.defaultMaterialType({color:0XFFFFFF,vertexColors: THREE.VertexColors})
-  var mesh = new THREE.Mesh( geometry, material )*/
-  //return mesh
+  return output
 }
