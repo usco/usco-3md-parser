@@ -1,13 +1,13 @@
 {
   "name": "usco-3mf-parser",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "http://github.com/usco/usco-3mf-parser.git"
   },
   "main": "src/index.js",
-  "browser":"lib/3mf-parser.js",
+  "browser": "lib/3mf-parser.js",
   "dependencies": {
     "composite-detect": "0.0.3",
     "fast.js": "^0.1.1",
