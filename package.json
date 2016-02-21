@@ -7,7 +7,6 @@
     "url": "http://github.com/usco/usco-3mf-parser.git"
   },
   "main": "src/index.js",
-  "browser": "lib/3mf-parser.js",
   "dependencies": {
     "composite-detect": "0.0.3",
     "fast.js": "^0.1.1",
@@ -36,9 +35,9 @@
     "test-client2": "mochify --transform babelify --transform workerify --transform brfs",
     "build": "npm run browserify",
     "release": "npm run release-patch",
-    "release-patch": "git checkout master && release patch",
-    "release-minor": "git checkout master && release minor",
-    "release-major": "git checkout master && release major"
+    "release-patch": "git checkout master && git commit -a -m 'Build lib/'; npm version patch && git push origin master --tags ",
+    "release-minor": "git checkout master && git commit -a -m 'Build lib/'; npm version minor && git push origin master --tags ",
+    "release-major": "git checkout master && git commit -a -m 'Build lib/'; npm version major && git push origin master --tags r"
   },
   "browserify-shim": {
     "rx": "global:Rx"
