@@ -1,4 +1,30 @@
-let detectEnv = require('composite-detect')
+import detectEnv from 'composite-detect'
+import workerSpawner from './workerSpawner'
+import makeStreamParser from './parseStream'
+import through2 from 'through2'
+
+/**
+ * @author kaosat-dev / https://github.com/kaosat-dev
+ *
+ * Description: A streaming (node.js streams) parser for 3MF files
+ * Optimised both for speed and low memory consumption
+ *
+ *
+ * Limitations:
+ *
+**/
+
+export default function makeParsedStream (parameters = {}) {
+  const defaults = {
+    useWorker: (detectEnv.isBrowser === true)
+  }
+  parameters = Object.assign({}, defaults, parameters)
+  const {useWorker} = parameters
+
+  return useWorker ? workerSpawner() : through2(makeStreamParser())
+}
+
+/*let detectEnv = require('composite-detect')
 
 import assign from 'fast.js/object/assign'
 import Rx from 'rx'
@@ -32,9 +58,6 @@ export default function parse (data, parameters = {}) {
     obs.catch(e => worker.terminate())
   } else {
     assemble(data)
-      /* .last(function (data, idx, obs) {
-        return data._finished === true
-      })*/ // WHY U NO WORK ??
       .subscribe(function (data) {
         if (data._finished === true) {
           obs.onNext({progress: 1, total: Math.NaN})
@@ -45,4 +68,4 @@ export default function parse (data, parameters = {}) {
   }
 
   return obs
-}
+}*/
