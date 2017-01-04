@@ -22,5 +22,6 @@ export default function makeParsedStream (parameters = {}) {
   parameters = Object.assign({}, defaults, parameters)
   const {useWorker} = parameters
 
+  console.log('using worker?', useWorker)
   return useWorker ? workerSpawner() : makeStreamParser()
 }
