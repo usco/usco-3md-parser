@@ -37,7 +37,7 @@ export default function (callback) {
   }
   function onParseEnd () {
     console.log('done', state)
-    callback(state)//{geometries: []})
+    callback(state)
   }
 
   xmlStream.on('opentag', onTagOpen)

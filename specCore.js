@@ -1,9 +1,11 @@
 import { parseVector3, parseIndices } from './parseHelpers'
-import { startObject, finishObject, metadata, createVIndices, createVNormals, createVCoords, createItem } from './specCoreCreate'
+import { createModel, startObject, finishObject, createMetadata, createVIndices, createVNormals, createVCoords, createItem, createComponent } from './specCoreCreate'
 
 export function detectAndCreate_Core (state, data) {
-  if (data.tag.name === 'metadata' && data.text) {
-    metadata(state, extractMetadata(data))
+  if (data.tag.name === 'model') {
+    createModel(state, extractModelData(data))
+  } else if (data.tag.name === 'metadata' && data.text) {
+    createMetadata(state, extractMetadata(data))
   } else if (data.tag.name === 'object' && data.start) {
     startObject(state, data)
   } else if (data.tag.name === 'object' && data.end) {
@@ -17,6 +19,8 @@ export function detectAndCreate_Core (state, data) {
     createVCoords(state, vertexIndicesR)
   } else if (data.tag.name === 'item' && data.start) {
     createItem(state, data)
+  } else if (data.tag.name === 'component' && data.end) {
+    createComponent(state, data)
   } else if (data.tag.name === 'build' && data.end) {
     state._finished = true
   }
@@ -42,12 +46,31 @@ export const stateExtras = {
 }
 
 // All helpers after this point
+export function getScaleFromUnit (self, unit = 'millimeter') {
+  const mapping = {
+    'micron': 0.001,
+    'millimeter': 1,
+    'centimeter': 10,
+    'meter': 1000,
+    'inch': 25.4,
+    'foot': 304.8
+  }
+  let scale = mapping[unit]
+  if (scale === undefined) {
+    console.warn(`Unrecognised unit ${unit} used. Assuming mm instead`)
+    scale = 1
+  }
+  return [scale, scale, scale]
+}
 
-export function threeMFInfo (data) {
-  let tag = data.tag
-  let unit = tag.attributes['unit']
-  let version = tag.attributes['version']
-  return {unit, version}
+export function extractModelData (data) {
+  let {tag} = data
+  const unit = tag.attributes['unit']
+  const scale = getScaleFromUnit(unit)
+  const version = tag.attributes['version']
+  let requiredExtensions = tag.attributes['requiredextensions']
+  requiredExtensions = requiredExtensions ? requiredExtensions.split('') : []
+  return {unit, version, requiredExtensions, scale}
 }
 
 export function extractMetadata (data) {

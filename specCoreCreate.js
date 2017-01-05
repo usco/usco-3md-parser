@@ -1,8 +1,17 @@
-//everything in this module is to help build up data from the raw data
+// everything in this module is to help build up data from the raw data
 const assign = Object.assign
 
+export function createModel (state, input) {
+  const {unit, version, requiredExtensions, scale} = input
+  state.unit = unit
+  state.version = version
+  state.requiredExtensions = requiredExtensions
+  state.transforms = {scale}
+  return state
+}
+
 export function createModelBuffers (modelData) {
-  //console.log("creating model buffers", modelData)//modelData, modelData._attributes)
+  // console.log("creating model buffers", modelData)//modelData, modelData._attributes)
   // other implementation
   const dataTypes = {'positions': Float32Array, 'indices': Uint32Array, 'normals': Float32Array, 'colors': Float32Array}
 
@@ -11,7 +20,7 @@ export function createModelBuffers (modelData) {
       if (key in modelData._attributes) {
         let data = modelData._attributes[key]
         let dataBuff = new dataTypes[key](data.length)
-        //console.log('key',key, data, dataBuff)
+        // console.log('key',key, data, dataBuff)
 
         dataBuff.set(data)
 
@@ -25,7 +34,6 @@ export function createModelBuffers (modelData) {
 
   return output
 }
-
 
 export function startObject (state, input) {
   let {tag} = input
@@ -58,7 +66,7 @@ export function finishObject (state, input) {
   return state
 }
 
-export function metadata (state, input) {
+export function createMetadata (state, input) {
   let metadata = assign({}, state.metadata, input)
   state.metadata = metadata
   return state
@@ -70,7 +78,7 @@ export function createVCoords (state, input) {
   const B = [positions[ input[1] * 3 ], positions[input[1] * 3 + 1], positions[input[1] * 3 + 2]]
   const C = [positions[ input[2] * 3 ], positions[input[2] * 3 + 1], positions[input[2] * 3 + 2]]
 
-  //console.log("createVCoords", positions, A, B, C)
+  // console.log("createVCoords", positions, A, B, C)
   state.currentObject._attributes.positions.push(...A, ...B, ...C) // state.currentObject._attributes.positions.concat(A).concat(B).concat(C)
   return state
 }
@@ -162,4 +170,21 @@ export function createItem (state, input) {
 
   state.build.push(item)
   return state
+}
+
+export function createComponent (state, input) {
+  let {tag} = input
+  const item = ['objectid', 'transform']
+    .reduce(function (result, key) {
+      // console.log('result', result)
+      if (key in tag.attributes) {
+        if (key === 'transform') {
+          result['transforms'] = tag.attributes[key].split(' ').map(t => parseFloat(t))
+        } else {
+          result[key] = tag.attributes[key]
+        }
+      }
+      return result
+    }, {})
+  console.log('createComponent', item)
 }
