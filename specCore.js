@@ -1,5 +1,5 @@
-import {parseVector3, parseIndices} from './parseHelpers'
-import { startObject, finishObject, metadata, vIndices, vNormals, vCoords2, createItem} from './specCoreCreate'
+import { parseVector3, parseIndices } from './parseHelpers'
+import { startObject, finishObject, metadata, createVIndices, createVNormals, createVCoords, createItem } from './specCoreCreate'
 
 export function detectAndCreate_Core (state, data) {
   if (data.tag.name === 'metadata' && data.text) {
@@ -9,13 +9,12 @@ export function detectAndCreate_Core (state, data) {
   } else if (data.tag.name === 'object' && data.end) {
     finishObject(state, data)
   } else if (data.tag.name === 'vertex' && data.start) {
-    let input = vertexCoordinate(data)
-    state.currentObject.positions.push(input)
+    state.currentObject.positions.push(...vertexCoordinate(data))
   } else if (data.tag.name === 'triangle' && data.start) {
     const vertexIndicesR = vertexIndices(data)
-    vIndices(state, vertexIndicesR)
-    vNormals(state, vertexIndicesR)
-    vCoords2(state, vertexIndicesR)
+    createVIndices(state, vertexIndicesR)
+    createVNormals(state, vertexIndicesR)
+    createVCoords(state, vertexIndicesR)
   } else if (data.tag.name === 'item' && data.start) {
     createItem(state, data)
   } else if (data.tag.name === 'build' && data.end) {

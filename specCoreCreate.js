@@ -2,7 +2,7 @@
 const assign = Object.assign
 
 export function createModelBuffers (modelData) {
-  // console.log("creating model buffers")//modelData, modelData._attributes)
+  //console.log("creating model buffers", modelData)//modelData, modelData._attributes)
   // other implementation
   const dataTypes = {'positions': Float32Array, 'indices': Uint32Array, 'normals': Float32Array, 'colors': Float32Array}
 
@@ -10,8 +10,9 @@ export function createModelBuffers (modelData) {
     .reduce(function (result, key) {
       if (key in modelData._attributes) {
         let data = modelData._attributes[key]
-
         let dataBuff = new dataTypes[key](data.length)
+        //console.log('key',key, data, dataBuff)
+
         dataBuff.set(data)
 
         result[key] = dataBuff
@@ -63,23 +64,23 @@ export function metadata (state, input) {
   return state
 }
 
-export function vCoords2 (state, input) {
+export function createVCoords (state, input) {
   const positions = state.currentObject.positions
   const A = [positions[ input[0] * 3 ], positions[input[0] * 3 + 1], positions[input[0] * 3 + 2]]
   const B = [positions[ input[1] * 3 ], positions[input[1] * 3 + 1], positions[input[1] * 3 + 2]]
   const C = [positions[ input[2] * 3 ], positions[input[2] * 3 + 1], positions[input[2] * 3 + 2]]
 
-  // console.log("positions 2",positions, A, B, C)
-  state.currentObject._attributes.positions.push(A, B, C) // state.currentObject._attributes.positions.concat(A).concat(B).concat(C)
+  //console.log("createVCoords", positions, A, B, C)
+  state.currentObject._attributes.positions.push(...A, ...B, ...C) // state.currentObject._attributes.positions.concat(A).concat(B).concat(C)
   return state
 }
 
-export function vIndices (state, input) {
-  state.currentObject._attributes.indices.push(input) // = state.currentObject._attributes.indices.concat(input)
+export function createVIndices (state, input) {
+  state.currentObject._attributes.indices.push(...input) // = state.currentObject._attributes.indices.concat(input)
   return state
 }
 
-export function vNormals (state, input) {
+export function createVNormals (state, input) {
   // see specs : A triangle face normal (for triangle ABC, in that order) throughout this specification is defined as
   // a unit vector in the direction of the vector cross product (B - A) x (C - A).
   // (B - A) x (C - A).
@@ -139,7 +140,7 @@ export function vNormals (state, input) {
     })
   }
 
-  state.currentObject._attributes.normals.push(normal, normal, normal) // state.currentObject._attributes.normals.concat(normal).concat(normal).concat(normal)
+  state.currentObject._attributes.normals.push(...normal, ...normal, ...normal) // state.currentObject._attributes.normals.concat(normal).concat(normal).concat(normal)
 
   return state
 }
