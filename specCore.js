@@ -1,7 +1,5 @@
 import {parseVector3, parseIndices} from './parseHelpers'
-import { startObject, finishObject, metadata,
-  vIndices, vNormals, vCoords2, vColors, vCoords, color, colorGroup, item
-} from './specCoreCreate'
+import { startObject, finishObject, metadata, vIndices, vNormals, vCoords2, createItem} from './specCoreCreate'
 
 export function detectAndCreate_Core (state, data) {
   if (data.tag.name === 'metadata' && data.text) {
@@ -19,11 +17,32 @@ export function detectAndCreate_Core (state, data) {
     vNormals(state, vertexIndicesR)
     vCoords2(state, vertexIndicesR)
   } else if (data.tag.name === 'item' && data.start) {
-    item(state, data)
+    createItem(state, data)
   } else if (data.tag.name === 'build' && data.end) {
     state._finished = true
   }
 }
+
+// any piece of state that needs to be added by this specific spec
+export const stateExtras = {
+  metadata: {},
+  objects: {},
+  build: [],
+  currentObject: {
+    id: undefined,
+    name: undefined,
+    positions: [],
+    _attributes: {
+      positions: [],
+      normals: [],
+      indices: [],
+      colors: []
+    }
+  },
+  resources: {}
+}
+
+// All helpers after this point
 
 export function threeMFInfo (data) {
   let tag = data.tag

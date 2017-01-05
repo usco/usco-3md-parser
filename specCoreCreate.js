@@ -144,7 +144,7 @@ export function vNormals (state, input) {
   return state
 }
 
-export function item (state, input) {
+export function createItem (state, input) {
   let {tag} = input
   const item = ['objectid', 'transform', 'partnumber']
     .reduce(function (result, key) {
@@ -159,6 +159,6 @@ export function item (state, input) {
       return result
     }, {})
 
-  state.build.push[item]
+  state.build.push(item)
   return state
 }
