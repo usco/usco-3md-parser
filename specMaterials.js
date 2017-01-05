@@ -9,20 +9,29 @@ export function detectAndCreate_Materials (state, data) {
     createColorGroup(state, extractColorGroup(data))
   } else if (data.tag.name === 'm:texture2dgroup' && data.end) {
     createTexture2dGroup(state, extractTexture2dgroup(data))
-  } else if (data.tag.name === 'm:compositeMaterials' && data.end) {
+  } else if (data.tag.name === 'm:compositematerials' && data.end) {
     createCompositeMaterials(state, extractCompositeMaterials(data))
+  } else if (data.tag.name === 'm:multiproperties' && data.end) {
+    console.warn('multiproperties are not yet implemented')
   } else if (data.tag.name === 'triangle' && data.start) {
     if (data.tag.attributes.hasOwnProperty('pid') && (data.tag.attributes.hasOwnProperty('p1') || data.tag.attributes.hasOwnProperty('p2') || data.tag.attributes.hasOwnProperty('p3'))) {
-      // createVColors(state, vertexColors(data))
+      createVColors(state, vertexColors(data))
     }
   } else if (data.tag.name === 'm:tex2coord' && data.end) {
     createUvs(state, extractTexture2dCoord(data))
+  } else if (data.tag.name === 'm:texture2d' && data.end) {
+    console.warn('texture2d are not yet implemented')
   }
-  else if (data.tag.name === 'm:texture2d' && data.end) {
-  }
-
 }
 
+// any piece of state that needs to be added by this specific spec
+export const stateExtras = {
+  currentColorGroup: {colors: []},
+  currentTexture2dGroup: {coords: []},
+  currentCompositeMaterials: []
+}
+
+// All helpers after this point
 export function vertexColors (data) {
   let {tag} = data
 
@@ -50,7 +59,6 @@ export function extractColorGroup (data) {
       return result
     }, {})
 
-  console.log('colorgroupData', colorgroupData)
   return colorgroupData
 }
 
@@ -76,7 +84,7 @@ export function extractTexture2dgroup (data) {
       return result
     }, {})
 
-  console.log('textureGroupData', textureGroupData)
+  // console.log('textureGroupData', textureGroupData)
   return textureGroupData
 }
 export function extractTexture2dCoord (data) {
@@ -97,8 +105,15 @@ export function parseUv (node, prefix, defaultValue) {
 // ---------Materials
 export function extractCompositeMaterials (data) {
   let {tag} = data
-  console.warn('compositeMaterials is not yet implemented')
-  let compositeMaterials = []
+  let compositeMaterials = ['id', 'matid'] // , 'matindices']
+    .reduce(function (result, key) {
+      if (key in tag.attributes) {
+        let value = tag.attributes[key]
+        result[key] = parseInt(value, 10)
+      }
+      return result
+    }, {})
+  console.warn('compositeMaterials is not yet fully implemented')
   console.log('compositeMaterials', compositeMaterials)
   return compositeMaterials
 }
