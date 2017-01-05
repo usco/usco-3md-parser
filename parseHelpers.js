@@ -11,8 +11,7 @@ export function parseText (value, toType, defaultValue) {
         break
     }
   }
-  else if (defaultValue !== null)
-  {
+  else if (defaultValue !== null) {
     value = defaultValue
   }
   return value
@@ -60,6 +59,10 @@ export function parseIndices (node) {
   let v2 = parseText(node.attributes[prefix + 'v2'], 'int', defaultValue)
   let v3 = parseText(node.attributes[prefix + 'v3'], 'int', defaultValue)
 
+  if (v1 === v2 || v1 === v3 || v2 === v3) {
+    throw new Error('the indices v1,v2,v3 should be different.')
+  }
+
   return [v1, v2, v3]
 }
 
@@ -91,29 +94,4 @@ export function parseMapCoords (node, prefix, defaultValue) {
   let mappingData = {matId: 0, uvs: [uv1, uv2, uv3]}
   // currentGeometry.faceVertexUvs[ 0 ].push( [uv1,uv2,uv3])
   return mappingData
-}
-
-export function createModelBuffers (modelData) {
-  //console.log("creating model buffers")//modelData, modelData._attributes)
-  // other implementation
-  const dataTypes = {'positions': Float32Array, 'indices': Uint32Array, 'normals': Float32Array, 'colors': Float32Array}
-
-  let output = ['positions', 'normals', 'colors'] // , "indices"]
-    .reduce(function (result, key) {
-      if (key in modelData._attributes) {
-
-        let data = modelData._attributes[key]
-
-        let dataBuff = new dataTypes[key](data.length)
-        dataBuff.set(data)
-
-        result[key] = dataBuff
-      }
-      return result
-    }, {})
-
-  output.id = modelData.id
-  output.name = modelData.name
-
-  return output
 }
