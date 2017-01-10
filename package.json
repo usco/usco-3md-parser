@@ -6,14 +6,15 @@
     "type": "git",
     "url": "http://github.com/usco/usco-3mf-parser.git"
   },
-  "main": "lib/server/index.js",
-  "browser": "lib/browser/3mf-parser.js",
+  "main": "dist/index.js",
   "dependencies": {
     "composite-detect": "0.0.3",
+    "concat-stream": "^1.6.0",
     "fast.js": "^0.1.1",
+    "gl-mat4": "^1.1.4",
     "jszip": "^2.5.0",
-    "rx": "^4.0.7",
-    "sax": "^1.1.4"
+    "sax": "^1.1.4",
+    "webworkify": "^1.4.0"
   },
   "devDependencies": {
     "babel-cli": "^6.3.15",
@@ -35,9 +36,7 @@
     "test": "npm run mocha",
     "test-client": "browserify-test --transform babelify --transform workerify --transform brfs ",
     "test-client2": "mochify --transform babelify --transform workerify --transform brfs",
-    "build-brs": "npm run browserify",
-    "build-srv": "babel -d lib/server src/",
-    "build": "npm run build-srv && npm run build-brs",
+    "build": "babel -d dist/ src/",
     "release": "npm run release-patch",
     "release-patch": "git checkout master && git commit -a -m 'Build lib/'; npm version patch && git push origin master --tags ",
     "release-minor": "git checkout master && git commit -a -m 'Build lib/'; npm version minor && git push origin master --tags ",
