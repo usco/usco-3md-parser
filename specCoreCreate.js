@@ -1,3 +1,4 @@
+import { matrixFromTransformString } from './parseHelpers'
 // everything in this module is to help build up data from the raw data
 const assign = Object.assign
 
@@ -160,14 +161,14 @@ export function createItem (state, input) {
       // console.log('result', result)
       if (key in tag.attributes) {
         if (key === 'transform') {
-          result['transforms'] = tag.attributes[key].split(' ').map(t => parseFloat(t))
+          result['transforms'] = matrixFromTransformString(tag.attributes[key])// .split(' ').map(t => parseFloat(t))
         } else {
           result[key] = tag.attributes[key]
         }
       }
       return result
     }, {})
-
+  console.log('item', item)
   state.build.push(item)
   return state
 }
@@ -179,12 +180,12 @@ export function createComponent (state, input) {
       // console.log('result', result)
       if (key in tag.attributes) {
         if (key === 'transform') {
-          result['transforms'] = tag.attributes[key].split(' ').map(t => parseFloat(t))
+          result['transforms'] = matrixFromTransformString(tag.attributes[key])
         } else {
           result[key] = tag.attributes[key]
         }
       }
       return result
-    }, {})
-  console.log('createComponent', item)
+    }, {}) 
+  //console.log('createComponent', item)
 }

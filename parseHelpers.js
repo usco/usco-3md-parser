@@ -99,7 +99,9 @@ export function parseMapCoords (node, prefix, defaultValue) {
 }
 
 export function matrixFromTransformString (transform) {
-  transform = transform.split().map(parseFloat)
+  transform = transform.split(' ').map(parseFloat)
+  //console.log('matrixFromTransformString',transform)
+
   // Transformation is saved as:
   // M00 M01 M02 0.0
   // M10 M11 M12 0.0
@@ -122,6 +124,8 @@ export function matrixFromTransformString (transform) {
   mat[6] = transform[6]
   mat[7] = transform[7]
   mat[8] = transform[8]
+
+  //console.log(mat)
 
   // Translation
   mat = mat4.translate(mat, mat, [transform[9], transform[10], transform[11]])
