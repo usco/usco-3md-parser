@@ -1,3 +1,5 @@
+import mat4 from 'gl-mat4'
+
 export function parseText (value, toType, defaultValue) {
   defaultValue = defaultValue || null
 
@@ -94,4 +96,35 @@ export function parseMapCoords (node, prefix, defaultValue) {
   let mappingData = {matId: 0, uvs: [uv1, uv2, uv3]}
   // currentGeometry.faceVertexUvs[ 0 ].push( [uv1,uv2,uv3])
   return mappingData
+}
+
+export function matrixFromTransformString (transform) {
+  transform = transform.split().map(parseFloat)
+  // Transformation is saved as:
+  // M00 M01 M02 0.0
+  // M10 M11 M12 0.0
+  // M20 M21 M22 0.0
+  // M30 M31 M32 1.0
+
+  // reusing some of the gl-mat4 code && Cura 3mf parser
+
+  let mat = mat4.create()
+  // We are switching the row & cols as that is how everyone else uses matrices!
+  // set Rotation & Scale
+  mat[0] = transform[0]
+  mat[1] = transform[1]
+  mat[2] = transform[2]
+
+  mat[3] = transform[3]
+  mat[4] = transform[4]
+  mat[5] = transform[5]
+
+  mat[6] = transform[6]
+  mat[7] = transform[7]
+  mat[8] = transform[8]
+
+  // Translation
+  mat = mat4.translate(mat, mat, [transform[9], transform[10], transform[11]])
+
+  return mat
 }
