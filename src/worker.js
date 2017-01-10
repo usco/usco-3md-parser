@@ -1,4 +1,3 @@
-// import makeStlStreamParser from './parseStream'
 import makeStreamParser from './parse'
 
 module.exports = function (self) {
