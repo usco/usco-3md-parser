@@ -27,22 +27,24 @@ export function detectAndCreate_Core (state, data) {
 }
 
 // any piece of state that needs to be added by this specific spec
-export const stateExtras = {
-  metadata: {},
-  objects: {},
-  build: [],
-  currentObject: {
-    id: undefined,
-    name: undefined,
-    positions: [],
-    _attributes: {
+export function makeStateExtras () {
+  return {
+    metadata: {},
+    objects: {},
+    build: [],
+    currentObject: {
+      id: undefined,
+      name: undefined,
       positions: [],
-      normals: [],
-      indices: [],
-      colors: []
-    }
-  },
-  resources: {}
+      _attributes: {
+        positions: [],
+        normals: [],
+        indices: [],
+        colors: []
+      }
+    },
+    resources: {}
+  }
 }
 
 // All helpers after this point

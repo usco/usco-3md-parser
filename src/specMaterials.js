@@ -25,10 +25,12 @@ export function detectAndCreate_Materials (state, data) {
 }
 
 // any piece of state that needs to be added by this specific spec
-export const stateExtras = {
-  currentColorGroup: {colors: []},
-  currentTexture2dGroup: {coords: []},
-  currentCompositeMaterials: []
+export function makeStateExtras () {
+  return {
+    currentColorGroup: {colors: []},
+    currentTexture2dGroup: {coords: []},
+    currentCompositeMaterials: []
+  }
 }
 
 // All helpers after this point

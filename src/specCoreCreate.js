@@ -187,5 +187,5 @@ export function createComponent (state, input) {
       }
       return result
     }, {})
-  //console.log('createComponent', item)
+  console.log('createComponent', item)
 }

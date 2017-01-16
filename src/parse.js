@@ -2,8 +2,8 @@ const concat = require('concat-stream')
 const JSZip = require('jszip')
 const sax = require('sax')
 
-import { detectAndCreate_Core, stateExtras as coreState } from './specCore'
-import { detectAndCreate_Materials, stateExtras as materialsState } from './specMaterials'
+import { detectAndCreate_Core, makeStateExtras as coreState } from './specCore'
+import { detectAndCreate_Materials, makeStateExtras as materialsState } from './specMaterials'
 /*  const concat = require('concat-stream')
   // const unzipper = require('unzipper')
   // const unzip = require('unzip')
@@ -15,7 +15,7 @@ import { detectAndCreate_Materials, stateExtras as materialsState } from './spec
   const sourceStream = fileReaderStream(files[0], {chunkSize: 64000})*/
 
 export default function (callback) {
-  let state = Object.assign({}, coreState, materialsState)
+  let state = Object.assign({}, coreState(), materialsState())
   const xmlStream = sax.createStream(true, {trim: true})
 
   function processData (data) {
@@ -36,8 +36,8 @@ export default function (callback) {
     processData({tag: this._parser.tag, text})
   }
   function onParseEnd () {
-    console.log('done', state)
     callback(state)
+    state = undefined
   }
 
   xmlStream.on('opentag', onTagOpen)
