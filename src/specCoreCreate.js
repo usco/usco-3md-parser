@@ -12,7 +12,7 @@ export function createModel (state, input) {
 }
 
 export function createModelBuffers (modelData) {
-  // console.log("creating model buffers", modelData)//modelData, modelData._attributes)
+  //console.log("creating model buffers", modelData)//modelData, modelData._attributes)
   // other implementation
   const dataTypes = {'positions': Float32Array, 'indices': Uint32Array, 'normals': Float32Array, 'colors': Float32Array}
 
@@ -168,7 +168,7 @@ export function createItem (state, input) {
       }
       return result
     }, {})
-  console.log('item', item)
+  //console.log('item', item)
   state.build.push(item)
   return state
 }
@@ -186,6 +186,6 @@ export function createComponent (state, input) {
         }
       }
       return result
-    }, {}) 
+    }, {})
   //console.log('createComponent', item)
 }
