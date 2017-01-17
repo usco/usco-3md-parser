@@ -1,56 +1,56 @@
 const concat = require('concat-stream')
 const JSZip = require('jszip')
-const sax = require('sax')
 
-import { detectAndCreate_Core, makeStateExtras as coreState } from './specCore'
-import { detectAndCreate_Materials, makeStateExtras as materialsState } from './specMaterials'
-/*  const concat = require('concat-stream')
-  // const unzipper = require('unzipper')
-  // const unzip = require('unzip')
-  const JSZip = require('jszip')
-  const sax = require('sax')
-  //const xmlParser = require('xml-streamer') // fails to load
-  const xmlSplit = require('xmlsplit') //does not work/unclear api
+import parse from './parse2'
 
-  const sourceStream = fileReaderStream(files[0], {chunkSize: 64000})*/
-
-export default function (callback) {
-  let state = Object.assign({}, coreState(), materialsState())
-  const xmlStream = sax.createStream(true, {trim: true})
-
-  function processData (data) {
-    // deal with core data
-    detectAndCreate_Core(state, data)
-    // deal with materials and colors
-    detectAndCreate_Materials(state, data)
-  }
-
-  function onTagOpen (tag) {
-    processData({tag, start: true})
-  }
-  function onTagClose (tag) {
-    if (!tag.name) { tag = {name: tag} }
-    processData({tag: this._parser.tag, end: true})
-  }
-  function onTagText (text) {
-    processData({tag: this._parser.tag, text})
-  }
-  function onParseEnd () {
-    callback(state)
-    state = undefined
-  }
-
-  xmlStream.on('opentag', onTagOpen)
-  xmlStream.on('closetag', onTagClose)
-  xmlStream.on('text', onTagText)
-  xmlStream.on('end', onParseEnd)
-
-  return concat(function (data) {
-    new JSZip().loadAsync(data).then(function (zip) {
-      if (zip.files && zip.files['3D'] !== null) {
-        zip.file('3D/3dmodel.model').nodeStream().pipe(xmlStream)
-      }
-    })
-    return data
+function resolveOne (zip, path, isRoot = false) {
+  return new Promise(function (resolve, reject) {
+    const hasFile = 'files' in zip && zip.files.hasOwnProperty(path)
+    console.log(zip, path, zip.files[path], hasFile)
+    if (hasFile) {
+      zip.file(path).nodeStream().pipe(parse({callback: resolve, isRoot}))
+    } else {
+      console.warn(`no such file ${path} in this 3MF file`)
+      resolve(undefined)
+    // reject(new Error(`no such file ${path} in this 3MF file`))
+    }
   })
+}
+
+export default function makeStreamParser (onDone) {
+  let finalCallback = function (data) {
+    new JSZip().loadAsync(data).then(function (zip) {
+      resolveOne(zip, '3D/3dmodel.model', true)
+        .then(function (rootData) {
+          console.log('rootData', rootData)
+          Promise.all(rootData.subResources.map(path => resolveOne(zip, path)))
+            .then(function (filesData) {
+              let result = {}
+              filesData
+                .filter(x => x !== undefined)
+                .forEach(function (fileData, index) {
+                  result[rootData.subResources[index]] = fileData
+                })
+              console.log('we have all the data', result)
+
+              // FIXME : awfull hack
+              rootData.build = rootData.build.map(function (item, newIndex) {
+                let id = item.objectid
+                let path = item.path
+                let resolvedPath = result[path]
+                if (!resolvedPath) {return undefined}
+                let resolved = resolvedPath.objects[id]
+                rootData.objects[newIndex] = resolved
+                return {objectid: newIndex}
+              }).filter(x => x !== undefined)
+              onDone(rootData)
+            })
+          if (rootData.subResources.length === 0) {
+            onDone(rootData)
+          }
+        //
+        })
+    })
+  }
+  return concat(finalCallback)
 }

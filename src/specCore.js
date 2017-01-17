@@ -43,7 +43,8 @@ export function makeStateExtras () {
         colors: []
       }
     },
-    resources: {}
+    resources: {},
+    subResources: []// this is for anything that needs async resolving
   }
 }
 

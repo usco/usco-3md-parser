@@ -12,7 +12,7 @@ export function createModel (state, input) {
 }
 
 export function createModelBuffers (modelData) {
-  //console.log("creating model buffers", modelData)//modelData, modelData._attributes)
+  // console.log("creating model buffers", modelData)//modelData, modelData._attributes)
   // other implementation
   const dataTypes = {'positions': Float32Array, 'indices': Uint32Array, 'normals': Float32Array, 'colors': Float32Array}
 
@@ -156,26 +156,30 @@ export function createVNormals (state, input) {
 
 export function createItem (state, input) {
   let {tag} = input
-  const item = ['objectid', 'transform', 'partnumber']
+  const item = ['objectid', 'transform', 'partnumber', 'path']
     .reduce(function (result, key) {
       // console.log('result', result)
       if (key in tag.attributes) {
         if (key === 'transform') {
-          result['transforms'] = matrixFromTransformString(tag.attributes[key])// .split(' ').map(t => parseFloat(t))
+          result['transforms'] = matrixFromTransformString(tag.attributes[key]) // .split(' ').map(t => parseFloat(t))
         } else {
           result[key] = tag.attributes[key]
         }
       }
       return result
     }, {})
-  //console.log('item', item)
+  // console.log('item', item)
   state.build.push(item)
+  console.log('item', item)
+  if (item.path) {
+    state.subResources.push(item.path)
+  }
   return state
 }
 
 export function createComponent (state, input) {
   let {tag} = input
-  const item = ['objectid', 'transform']
+  const item = ['objectid', 'transform', 'path'] // FIXME: no clear seperation of specs, path is production spec
     .reduce(function (result, key) {
       // console.log('result', result)
       if (key in tag.attributes) {
