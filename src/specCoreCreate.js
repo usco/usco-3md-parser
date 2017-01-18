@@ -168,9 +168,8 @@ export function createItem (state, input) {
       }
       return result
     }, {})
-  // console.log('item', item)
   state.build.push(item)
-  console.log('item', item)
+
   if (item.path) {
     state.subResources.push(item.path)
   }

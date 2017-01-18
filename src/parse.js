@@ -6,7 +6,6 @@ import parse from './parse2'
 function resolveOne (zip, path, isRoot = false) {
   return new Promise(function (resolve, reject) {
     const hasFile = 'files' in zip && zip.files.hasOwnProperty(path)
-    console.log(zip, path, zip.files[path], hasFile)
     if (hasFile) {
       zip.file(path).nodeStream().pipe(parse({callback: resolve, isRoot}))
     } else {
@@ -22,7 +21,7 @@ export default function makeStreamParser (onDone) {
     new JSZip().loadAsync(data).then(function (zip) {
       resolveOne(zip, '3D/3dmodel.model', true)
         .then(function (rootData) {
-          console.log('rootData', rootData)
+          // console.log('rootData', rootData)
           Promise.all(rootData.subResources.map(path => resolveOne(zip, path)))
             .then(function (filesData) {
               let result = {}
@@ -31,24 +30,23 @@ export default function makeStreamParser (onDone) {
                 .forEach(function (fileData, index) {
                   result[rootData.subResources[index]] = fileData
                 })
-              console.log('we have all the data', result)
+                // console.log('we have all the data', result)
 
               // FIXME : awfull hack
+              // console.log('filesData', rootData.build)
               rootData.build = rootData.build.map(function (item, newIndex) {
                 let id = item.objectid
                 let path = item.path
                 let resolvedPath = result[path]
-                if (!resolvedPath) {return undefined}
+                if (!resolvedPath) {return item}
                 let resolved = resolvedPath.objects[id]
                 rootData.objects[newIndex] = resolved
                 return {objectid: newIndex}
               }).filter(x => x !== undefined)
+
+              // this always gets called, even if there are not sub resources
               onDone(rootData)
             })
-          if (rootData.subResources.length === 0) {
-            onDone(rootData)
-          }
-        //
         })
     })
   }
