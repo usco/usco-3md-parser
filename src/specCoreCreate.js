@@ -46,16 +46,31 @@ export function startObject (state, input) {
       }
       return result
     }, {})
+
+  //  metaType can be either 'object' or 'component'
   state.currentObject = assign({}, state.currentObject, object)
   return state
 }
 
 export function finishObject (state, input) {
-  state.objects[state.currentObject.id] = createModelBuffers(state.currentObject)
+  const object = state.currentObject
+  if (object.components.length > 0) {
+    //console.log('I got components dude', object.id)
+    /*if(object.components.length === 1 ){
+      let single = state.objects[object.components[0].objectid]
+      if(! single.components){
+        state.objects[object.id]= createModelBuffers(single)
+      }
+    }*/
+    state.objects[object.id] = {components: object.components}
+  } else {
+    state.objects[object.id] = createModelBuffers(object)
+  }
 
   state.currentObject = {
     id: undefined,
     name: undefined,
+    components: [],
     positions: [],
     _attributes: {
       positions: [],
@@ -178,7 +193,7 @@ export function createItem (state, input) {
 
 export function createComponent (state, input) {
   let {tag} = input
-  const item = ['objectid', 'transform', 'path'] // FIXME: no clear seperation of specs, path is production spec
+  const item = ['id', 'objectid', 'transform', 'path'] // FIXME: no clear seperation of specs, path is production spec
     .reduce(function (result, key) {
       // console.log('result', result)
       if (key in tag.attributes) {
@@ -190,5 +205,8 @@ export function createComponent (state, input) {
       }
       return result
     }, {})
-  console.log('createComponent', item)
+
+  // state.objects[state.currentObject.id]= item
+  state.currentObject.components.push(item)
+  //console.log('createComponent', item)
 }

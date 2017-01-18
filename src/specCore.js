@@ -35,6 +35,8 @@ export function makeStateExtras () {
     currentObject: {
       id: undefined,
       name: undefined,
+      components: [],
+
       positions: [],
       _attributes: {
         positions: [],
