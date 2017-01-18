@@ -30,9 +30,6 @@ export function createModelBuffers (modelData) {
       return result
     }, {})
 
-  output.id = modelData.id
-  output.name = modelData.name
-
   return output
 }
 
@@ -54,18 +51,11 @@ export function startObject (state, input) {
 
 export function finishObject (state, input) {
   const object = state.currentObject
-  if (object.components.length > 0) {
-    //console.log('I got components dude', object.id)
-    /*if(object.components.length === 1 ){
-      let single = state.objects[object.components[0].objectid]
-      if(! single.components){
-        state.objects[object.id]= createModelBuffers(single)
-      }
-    }*/
-    state.objects[object.id] = {components: object.components}
-  } else {
-    state.objects[object.id] = createModelBuffers(object)
-  }
+  
+  state.objects[object.id] = Object.assign(
+    {id: object.id, name: object.name, type: object.type},
+    {geometry: createModelBuffers(object)},
+    {components: object.components})
 
   state.currentObject = {
     id: undefined,
@@ -208,5 +198,5 @@ export function createComponent (state, input) {
 
   // state.objects[state.currentObject.id]= item
   state.currentObject.components.push(item)
-  //console.log('createComponent', item)
+// console.log('createComponent', item)
 }
