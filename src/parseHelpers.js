@@ -100,7 +100,7 @@ export function parseMapCoords (node, prefix, defaultValue) {
 
 export function matrixFromTransformString (transform) {
   transform = transform.split(' ').map(parseFloat)
-  //console.log('matrixFromTransformString',transform)
+  // console.log('matrixFromTransformString',transform)
 
   // Transformation is saved as:
   // M00 M01 M02 0.0
@@ -108,27 +108,21 @@ export function matrixFromTransformString (transform) {
   // M20 M21 M22 0.0
   // M30 M31 M32 1.0
 
-  // reusing some of the gl-mat4 code && Cura 3mf parser
-
+  // reusing some of the Cura 3mf parser code
   let mat = mat4.create()
   // We are switching the row & cols as that is how everyone else uses matrices!
   // set Rotation & Scale
   mat[0] = transform[0]
-  mat[1] = transform[1]
-  mat[2] = transform[2]
+  mat[1] = transform[3]
+  mat[2] = transform[6]
 
-  mat[3] = transform[3]
-  mat[4] = transform[4]
-  mat[5] = transform[5]
+  mat[4] = transform[3]
+  mat[5] = transform[4]
+  mat[6] = transform[5]
 
-  mat[6] = transform[6]
-  mat[7] = transform[7]
-  mat[8] = transform[8]
-
-  //console.log(mat)
-
-  // Translation
-  mat = mat4.translate(mat, mat, [transform[9], transform[10], transform[11]])
+  mat[8] = transform[6]
+  mat[9] = transform[7]
+  mat[10] = transform[8]
 
   return mat
 }
