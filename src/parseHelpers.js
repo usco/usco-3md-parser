@@ -112,7 +112,21 @@ export function matrixFromTransformString (transform) {
   let mat = mat4.create()
   // We are switching the row & cols as that is how everyone else uses matrices!
   // set Rotation & Scale
-  mat[0] = transform[0]
+  /*mat[0] = transform[0]
+  mat[1] = transform[3]
+  mat[2] = transform[6]
+  mat[3] = transform[9]
+
+  mat[4] = transform[1]
+  mat[5] = transform[4]
+  mat[6] = transform[7]
+  mat[7] = transform[10]
+
+  mat[8] = transform[2]
+  mat[9] = transform[5]
+  mat[10] = transform[8]
+  mat[11] = transform[11]*/
+  /*mat[0] = transform[0]
   mat[1] = transform[3]
   mat[2] = transform[6]
 
@@ -122,7 +136,33 @@ export function matrixFromTransformString (transform) {
 
   mat[8] = transform[6]
   mat[9] = transform[7]
+  mat[10] = transform[8]*/
+
+  /*[
+    1,0,0,0,
+    0,1,0,0,
+    0,0,1,0,
+    0,0,0,1
+  ]*/
+  // IMPORTANT !! translate first otherwise translation is impacted by negative scale etc
+  mat4.translate(mat, mat, [transform[9], transform[10], transform[11]])
+
+
+  mat[0] = transform[0]
+  mat[4] = transform[1]
+  mat[8] = transform[2]
+
+  mat[1] = transform[3]
+  mat[5] = transform[4]
+  mat[9] = transform[5]
+
+  mat[2] = transform[6]
+  mat[6] = transform[7]
   mat[10] = transform[8]
 
+  //mat[3] = 1//transform[9]
+  //mat[7] = 1//transform[10]
+  //mat[11] = 1//transform[11]
+  //console.log('transform', transform[9], transform[10], transform[11])
   return mat
 }
