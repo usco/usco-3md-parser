@@ -1,7 +1,6 @@
 import makeStreamParser from './parse'
 
 module.exports = function (self) {
-  console.log('in worker')
   const streamParser = makeStreamParser(function(data){
     //console.log('done with parsing', data)
     self.postMessage(data)

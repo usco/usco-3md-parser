@@ -124,7 +124,6 @@ export function extractComposite (data) {
   let {tag} = data
   console.warn('composite is not yet implemented')
   let composite = []
-  console.log('composite', composite)
   return composite
 }
 
@@ -132,7 +131,6 @@ export function extractMultiProperties (data) {
   let {tag} = data
   console.warn('multiProperties is not yet implemented')
   let multiProperties = []
-  console.log('multiProperties', multiProperties)
   return multiProperties
 }
 
@@ -140,6 +138,5 @@ export function extractMulti (data) {
   let {tag} = data
   console.warn('multi is not yet implemented')
   let multi = []
-  console.log('multi', multi)
   return multi
 }

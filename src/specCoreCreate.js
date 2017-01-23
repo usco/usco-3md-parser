@@ -51,7 +51,7 @@ export function startObject (state, input) {
 
 export function finishObject (state, input) {
   const object = state.currentObject
-  
+
   state.objects[object.id] = Object.assign(
     {id: object.id, name: object.name, type: object.type},
     {geometry: createModelBuffers(object)},
@@ -143,7 +143,7 @@ export function createVNormals (state, input) {
 
   function assignAtIndex (target, startIndex, data) {
     for (let i = 0;i < 3;i++) {
-      console.log('assign', target, startIndex, data, data[i])
+      //console.log('assign', target, startIndex, data, data[i])
       target[startIndex + i] = data[i]
     }
   }
