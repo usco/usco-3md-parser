@@ -16,10 +16,6 @@ var _workerSpawner = require('./workerSpawner');
 
 var _workerSpawner2 = _interopRequireDefault(_workerSpawner);
 
-var _through = require('through2');
-
-var _through2 = _interopRequireDefault(_through);
-
 var _parse = require('./parse');
 
 var _parse2 = _interopRequireDefault(_parse);
