@@ -68,8 +68,11 @@ export function extractColor (data) {
   let {tag} = data
   let color = tag.attributes['color']
   if (color) {
+    console.log('color', color)
     color = hexToRgba(color)
+    console.log('color', color)
     color = normalizeRgba(color)
+    console.log('color', color)
   }
   return color
 }

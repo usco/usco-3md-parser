@@ -1,4 +1,4 @@
-import makeStreamParser from './parse'
+import makeStreamParser from './makeStreamParser'
 
 module.exports = function (self) {
   const streamParser = makeStreamParser(function(data){

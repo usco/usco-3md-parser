@@ -1,7 +1,7 @@
 import detectEnv from 'composite-detect'
 import workerSpawner from './workerSpawner'
 // import makeStreamParser from './parseStream'
-import makeStreamParser from './parse'
+import makeStreamParser from './makeStreamParser'
 
 /**
  * @author kaosat-dev / https://github.com/kaosat-dev

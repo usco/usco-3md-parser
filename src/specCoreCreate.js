@@ -36,7 +36,7 @@ export function createModelBuffers (modelData) {
 export function startObject (state, input) {
   let {tag} = input
 
-  const object = ['id', 'name', 'type', 'pid']
+  const object = ['id', 'name', 'type', 'pid', 'p']
     .reduce(function (result, key) {
       if (key in tag.attributes) {
         result[key] = tag.attributes[key]
@@ -44,7 +44,6 @@ export function startObject (state, input) {
       return result
     }, {})
 
-  //  metaType can be either 'object' or 'component'
   state.currentObject = assign({}, state.currentObject, object)
   return state
 }
@@ -52,8 +51,10 @@ export function startObject (state, input) {
 export function finishObject (state, input) {
   const object = state.currentObject
 
+  //FIXME, we should just copy keys from the currentObject, otherwise we lose stuff
   state.objects[object.id] = Object.assign(
     {id: object.id, name: object.name, type: object.type},
+    {pid: object.pid, p: object.p},
     {geometry: createModelBuffers(object)},
     {components: object.components})
 
@@ -183,7 +184,7 @@ export function createItem (state, input) {
 
 export function createComponent (state, input) {
   let {tag} = input
-  const item = ['id', 'objectid', 'transform', 'path'] // FIXME: no clear seperation of specs, path is production spec
+  const component = ['id', 'objectid', 'transform', 'path'] // FIXME: no clear seperation of specs, path is production spec
     .reduce(function (result, key) {
       // console.log('result', result)
       if (key in tag.attributes) {
@@ -197,6 +198,11 @@ export function createComponent (state, input) {
     }, {})
 
   // state.objects[state.currentObject.id]= item
-  state.currentObject.components.push(item)
+  state.currentObject.components.push(component)
+
+  const componentPath = component.path
+  if (componentPath && state.subResources.indexOf(componentPath) === -1) {
+    state.subResources.push(componentPath)
+  }
 // console.log('createComponent', item)
 }

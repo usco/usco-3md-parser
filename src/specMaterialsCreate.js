@@ -1,5 +1,4 @@
 export function createColorGroup (state, input) {
-  // console.log('setting colorGroup', input, state.colors)
   state.currentColorGroup.type = 'colorGroup'
 
   state.resources[input.id] = state.currentColorGroup
