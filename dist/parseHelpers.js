@@ -52,7 +52,7 @@ function hexToRgba(hex) {
   var r = parseInt(hex.substring(0, 2), 16);
   var g = parseInt(hex.substring(2, 4), 16);
   var b = parseInt(hex.substring(4, 6), 16);
-  var a = parseInt(hex.substring(6, 8), 16);
+  var a = hex.length > 6 ? parseInt(hex.substring(6, 8), 16) : 255;
   return [r, g, b, a];
 }
 

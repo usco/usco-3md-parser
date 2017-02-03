@@ -89,8 +89,11 @@ function extractColor(data) {
 
   var color = tag.attributes['color'];
   if (color) {
+    console.log('color', color);
     color = (0, _parseHelpers.hexToRgba)(color);
+    console.log('color', color);
     color = (0, _parseHelpers.normalizeRgba)(color);
+    console.log('color', color);
   }
   return color;
 }

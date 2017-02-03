@@ -1,13 +1,13 @@
 'use strict';
 
-var _parse = require('./parse');
+var _makeStreamParser = require('./makeStreamParser');
 
-var _parse2 = _interopRequireDefault(_parse);
+var _makeStreamParser2 = _interopRequireDefault(_makeStreamParser);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 module.exports = function (self) {
-  var streamParser = (0, _parse2.default)(function (data) {
+  var streamParser = (0, _makeStreamParser2.default)(function (data) {
     //console.log('done with parsing', data)
     self.postMessage(data);
     self.postMessage(null);

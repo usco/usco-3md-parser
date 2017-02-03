@@ -60,14 +60,13 @@ function startObject(state, input) {
   var tag = input.tag;
 
 
-  var object = ['id', 'name', 'type', 'pid'].reduce(function (result, key) {
+  var object = ['id', 'name', 'type', 'pid', 'p'].reduce(function (result, key) {
     if (key in tag.attributes) {
       result[key] = tag.attributes[key];
     }
     return result;
   }, {});
 
-  //  metaType can be either 'object' or 'component'
   state.currentObject = assign({}, state.currentObject, object);
   return state;
 }
@@ -75,7 +74,8 @@ function startObject(state, input) {
 function finishObject(state, input) {
   var object = state.currentObject;
 
-  state.objects[object.id] = Object.assign({ id: object.id, name: object.name, type: object.type }, { geometry: createModelBuffers(object) }, { components: object.components });
+  //FIXME, we should just copy keys from the currentObject, otherwise we lose stuff
+  state.objects[object.id] = Object.assign({ id: object.id, name: object.name, type: object.type }, { pid: object.pid, p: object.p }, { geometry: createModelBuffers(object) }, { components: object.components });
 
   state.currentObject = {
     id: undefined,
@@ -210,7 +210,7 @@ function createItem(state, input) {
 function createComponent(state, input) {
   var tag = input.tag;
 
-  var item = ['id', 'objectid', 'transform', 'path'] // FIXME: no clear seperation of specs, path is production spec
+  var component = ['id', 'objectid', 'transform', 'path'] // FIXME: no clear seperation of specs, path is production spec
   .reduce(function (result, key) {
     // console.log('result', result)
     if (key in tag.attributes) {
@@ -224,6 +224,11 @@ function createComponent(state, input) {
   }, {});
 
   // state.objects[state.currentObject.id]= item
-  state.currentObject.components.push(item);
+  state.currentObject.components.push(component);
+
+  var componentPath = component.path;
+  if (componentPath && state.subResources.indexOf(componentPath) === -1) {
+    state.subResources.push(componentPath);
+  }
   // console.log('createComponent', item)
 }

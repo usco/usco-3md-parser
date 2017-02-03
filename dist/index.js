@@ -16,9 +16,9 @@ var _workerSpawner = require('./workerSpawner');
 
 var _workerSpawner2 = _interopRequireDefault(_workerSpawner);
 
-var _parse = require('./parse');
+var _makeStreamParser = require('./makeStreamParser');
 
-var _parse2 = _interopRequireDefault(_parse);
+var _makeStreamParser2 = _interopRequireDefault(_makeStreamParser);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -52,7 +52,7 @@ function wrapper() {
 
       var _this = _possibleConstructorReturn(this, (Outer.__proto__ || Object.getPrototypeOf(Outer)).call(this, { readableObjectMode: true }));
 
-      _this.streamParser = (0, _parse2.default)(function (data) {
+      _this.streamParser = (0, _makeStreamParser2.default)(function (data) {
         return _this.push(data);
       });
       _this.on('finish', function () {
