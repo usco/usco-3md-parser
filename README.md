@@ -6,10 +6,10 @@
 [![Dependency Status](https://david-dm.org/usco/usco-3mf-parser.svg)](https://david-dm.org/usco/usco-3mf-parser)
 [![devDependency Status](https://david-dm.org/usco/usco-3mf-parser/dev-status.svg)](https://david-dm.org/usco/usco-3mf-parser#info=devDependencies)
 
-> [3mf](https://en.wikipedia.org/wiki/3D_Manufacturing_Format) format parser for USCO project
+> Fast and efficient [3mf](https://en.wikipedia.org/wiki/3D_Manufacturing_Format) format parser
 
 - Optimized for speed (webworkers)
-- low memory consumption (streams)
+- And low memory consumption (streams)
 - works in the Node.js & browser
 
 
