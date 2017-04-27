@@ -5,7 +5,7 @@ import makeParsedStream from '../src/index'
 import mat4 from 'gl-mat4'
 
 //TODO: add tests with production spec files & transforms !!
-//TODO: add tests for negative scale and its impact 
+//TODO: add tests for negative scale and its impact
 
 /*test.cb('can parse 3mf files with simple geometry ', t => {
   fs.createReadStream('./data/box.3mf', { encoding: null, highWaterMark: 512 * 1024 }) // 'binary'
@@ -18,7 +18,7 @@ import mat4 from 'gl-mat4'
     })
 })*/
 
-test.cb('can parse 3mf files with components ', t => {
+/*test.cb('can parse 3mf files with components ', t => {
   fs.createReadStream('./data/ghosts_II.3mf', { encoding: null, highWaterMark: 512 * 1024 }) // 'binary'
     .pipe(makeParsedStream())
     .on('data', function (parsed) {
@@ -31,6 +31,23 @@ test.cb('can parse 3mf files with components ', t => {
       t.deepEqual(parsed.objects[62].components.length , 29)
       t.deepEqual(parsed.objects[4].geometry.positions.length, 108)
       t.deepEqual(parsed.objects[4].geometry.normals.length, 108)
+      t.end()
+    })
+})*/
+
+test.cb('can parse 3mf files with production spec structure ', t => {
+  fs.createReadStream('./data/production.3mf', { encoding: null, highWaterMark: 512 * 1024 }) // 'binary'
+    .pipe(makeParsedStream())
+    .on('data', function (parsed) {
+      console.log('parsed', parsed)
+      //console.log(parsed.objects[0].components[0])
+
+      //assembleStuff(parsed)
+      /*
+      t.deepEqual(Object.keys(parsed.objects).length, 59)
+      t.deepEqual(parsed.objects[62].components.length , 29)
+      t.deepEqual(parsed.objects[4].geometry.positions.length, 108)
+      t.deepEqual(parsed.objects[4].geometry.normals.length, 108)*/
       t.end()
     })
 })
